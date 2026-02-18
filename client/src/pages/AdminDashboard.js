@@ -1,0 +1,306 @@
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
+import './AdminDashboard.css';
+
+const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [dashboardStats, setDashboardStats] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [deliveries, setDeliveries] = useState([]);
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  useEffect(() => {
+    if (activeTab === 'users') fetchUsers();
+    if (activeTab === 'tracking') fetchDeliveries();
+    if (activeTab === 'billing') fetchAllBills();
+  }, [activeTab, selectedDate]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const res = await api.get('/admin/dashboard');
+      setDashboardStats(res.data.data);
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/admin/users');
+      setUsers(res.data.data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchDeliveries = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get(`/deliveries/date/${selectedDate}`);
+      setDeliveries(res.data.data);
+    } catch (error) {
+      console.error('Error fetching deliveries:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAllBills = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/admin/monthly-report', {
+        params: {
+          month: new Date().getMonth() + 1,
+          year: new Date().getFullYear()
+        }
+      });
+      setBills(res.data.data);
+    } catch (error) {
+      console.error('Error fetching bills:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleDelivery = async (deliveryId, currentStatus) => {
+    try {
+      await api.put(`/deliveries/${deliveryId}`, {
+        delivered: !currentStatus
+      });
+      fetchDeliveries();
+    } catch (error) {
+      console.error('Error updating delivery:', error);
+    }
+  };
+
+  const generateBills = async () => {
+    try {
+      const month = new Date().getMonth();
+      const year = new Date().getFullYear();
+      const res = await api.post('/bills/generate-all', {
+        month: month === 0 ? 12 : month,
+        year: month === 0 ? year - 1 : year
+      });
+      alert(res.data.message);
+      fetchAllBills();
+    } catch (error) {
+      console.error('Error generating bills:', error);
+    }
+  };
+
+  return (
+    <div className="admin-page">
+      <div className="container">
+        <div className="admin-header">
+          <h1>Admin Dashboard</h1>
+          <p>Manage your tiffin service operations</p>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="admin-tabs">
+          <button
+            className={`tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
+            onClick={() => setActiveTab('dashboard')}
+          >
+            📊 Dashboard
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'users' ? 'active' : ''}`}
+            onClick={() => setActiveTab('users')}
+          >
+            👥 Users
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'tracking' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tracking')}
+          >
+            📦 Daily Tracking
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'billing' ? 'active' : ''}`}
+            onClick={() => setActiveTab('billing')}
+          >
+            💰 Billing
+          </button>
+        </div>
+
+        {/* Dashboard Tab */}
+        {activeTab === 'dashboard' && dashboardStats && (
+          <div className="dashboard-content">
+            <div className="stats-grid">
+              <div className="stat-card">
+                <h3>Total Users</h3>
+                <span className="stat-number">{dashboardStats.totalUsers}</span>
+              </div>
+              <div className="stat-card">
+                <h3>Active Subscriptions</h3>
+                <span className="stat-number">{dashboardStats.activeSubscriptions}</span>
+              </div>
+              <div className="stat-card">
+                <h3>Today's Deliveries</h3>
+                <span className="stat-number">{dashboardStats.todayTotal}</span>
+                <div className="stat-breakdown">
+                  <span>Delivered: {dashboardStats.todayDelivered}</span>
+                  <span>Pending: {dashboardStats.todayPending}</span>
+                </div>
+              </div>
+              <div className="stat-card">
+                <h3>Pending Amount</h3>
+                <span className="stat-number">₹{dashboardStats.totalPendingAmount}</span>
+                <p>{dashboardStats.pendingBillsCount} bills pending</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Users Tab */}
+        {activeTab === 'users' && (
+          <div className="users-content">
+            {loading ? <div className="loader"></div> : (
+              <div className="users-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Phone</th>
+                      <th>Area</th>
+                      <th>Meal Type</th>
+                      <th>Price/Tiffin</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map(user => (
+                      <tr key={user._id}>
+                        <td>{user.name}</td>
+                        <td>{user.phone}</td>
+                        <td>{user.address?.area || '-'}</td>
+                        <td>
+                          <span className={`tag tag-${user.subscription?.mealType || 'veg'}`}>
+                            {user.subscription?.mealType || 'N/A'}
+                          </span>
+                        </td>
+                        <td>₹{user.subscription?.pricePerTiffin || '-'}</td>
+                        <td>
+                          <span className={`badge badge-${user.subscription?.status === 'active' ? 'success' : 'warning'}`}>
+                            {user.subscription?.status || 'No subscription'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {users.length === 0 && <p className="no-data">No users found</p>}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Daily Tracking Tab */}
+        {activeTab === 'tracking' && (
+          <div className="tracking-content">
+            <div className="tracking-header">
+              <h3>Select Date</h3>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="date-input"
+              />
+              <button 
+                className="btn btn-secondary"
+                onClick={async () => {
+                  await api.post('/deliveries/create-daily', { date: selectedDate });
+                  fetchDeliveries();
+                }}
+              >
+                Generate Today's Records
+              </button>
+            </div>
+
+            {loading ? <div className="loader"></div> : (
+              <div className="tracking-list">
+                {deliveries.map(delivery => (
+                  <div key={delivery._id} className="tracking-item">
+                    <div className="user-info">
+                      <strong>{delivery.user?.name}</strong>
+                      <span>{delivery.user?.phone}</span>
+                      <span className={`tag tag-${delivery.subscription?.mealType}`}>
+                        {delivery.subscription?.mealType}
+                      </span>
+                    </div>
+                    <div className="delivery-action">
+                      <label className="toggle-switch">
+                        <input
+                          type="checkbox"
+                          checked={delivery.delivered}
+                          onChange={() => toggleDelivery(delivery._id, delivery.delivered)}
+                        />
+                        <span className="slider"></span>
+                      </label>
+                      <span className={delivery.delivered ? 'status delivered' : 'status pending'}>
+                        {delivery.delivered ? 'Delivered' : 'Pending'}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                {deliveries.length === 0 && <p className="no-data">No deliveries for this date</p>}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Billing Tab */}
+        {activeTab === 'billing' && (
+          <div className="billing-content">
+            <div className="billing-header">
+              <h3>Monthly Billing Report</h3>
+              <button className="btn btn-primary" onClick={generateBills}>
+                Generate Bills
+              </button>
+            </div>
+
+            {loading ? <div className="loader"></div> : (
+              <div className="billing-list">
+                {bills.map((item, index) => (
+                  <div key={index} className="billing-item">
+                    <div className="billing-user">
+                      <strong>{item.user?.name}</strong>
+                      <span>{item.user?.address?.area}</span>
+                    </div>
+                    <div className="billing-stats">
+                      <div className="stat">
+                        <label>Tiffins Delivered</label>
+                        <span>{item.deliveredDays}</span>
+                      </div>
+                      <div className="stat">
+                        <label>Price/Tiffin</label>
+                        <span>₹{item.subscription?.pricePerTiffin}</span>
+                      </div>
+                      <div className="stat total-amount">
+                        <label>Total Bill</label>
+                        <span className="amount">₹{item.billAmount}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {bills.length === 0 && <p className="no-data">No billing data available</p>}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;

@@ -1,4 +1,4 @@
-"const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const subscriptionSchema = new mongoose.Schema({
   user: {
@@ -51,4 +51,4 @@ const subscriptionSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Subscription', subscriptionSchema);"
+module.exports = mongoose.model('Subscription', subscriptionSchema);

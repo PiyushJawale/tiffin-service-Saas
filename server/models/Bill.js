@@ -1,4 +1,4 @@
-"const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const billSchema = new mongoose.Schema({
   user: {
@@ -55,4 +55,4 @@ const billSchema = new mongoose.Schema({
 // Compound index for unique bill per user per month/year
 billSchema.index({ user: 1, month: 1, year: 1 }, { unique: true });
 
-module.exports = mongoose.model('Bill', billSchema);"
+module.exports = mongoose.model('Bill', billSchema)

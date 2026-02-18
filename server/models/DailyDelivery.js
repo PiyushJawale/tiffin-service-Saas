@@ -1,4 +1,4 @@
-"const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const dailyDeliverySchema = new mongoose.Schema({
   user: {
@@ -37,4 +37,4 @@ const dailyDeliverySchema = new mongoose.Schema({
 // Compound index to ensure one delivery record per user per date
 dailyDeliverySchema.index({ user: 1, date: 1 }, { unique: true });
 
-module.exports = mongoose.model('DailyDelivery', dailyDeliverySchema);"
+module.exports = mongoose.model('DailyDelivery', dailyDeliverySchema)

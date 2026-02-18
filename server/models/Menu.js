@@ -1,4 +1,4 @@
-"const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const menuSchema = new mongoose.Schema({
   name: {
@@ -47,4 +47,4 @@ const menuSchema = new mongoose.Schema({
   timestamps: true
 });
 
-module.exports = mongoose.model('Menu', menuSchema);"
+module.exports = mongoose.model('Menu', menuSchema)

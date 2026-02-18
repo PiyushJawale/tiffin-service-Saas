@@ -1,0 +1,142 @@
+.contact-page {
+  padding: 40px 20px;
+  min-height: 80vh;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+/* Contact Info Cards */
+.contact-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.info-card {
+  background: var(--white);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.info-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.info-card h3 {
+  font-size: 18px;
+  color: var(--dark-gray);
+  margin-bottom: 8px;
+}
+
+.info-card p {
+  color: var(--medium-gray);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* Contact Form */
+.contact-form-container {
+  background: var(--white);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.submit-btn {
+  padding: 14px;
+  font-size: 18px;
+}
+
+.success-message {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.success-message span {
+  font-size: 60px;
+  color: var(--fresh-green);
+}
+
+.success-message h3 {
+  margin-top: 16px;
+  color: var(--dark-gray);
+}
+
+.success-message p {
+  color: var(--medium-gray);
+}
+
+/* FAQ Section */
+.faq-section {
+  background: var(--light-gray);
+  padding: 40px;
+  border-radius: 20px;
+}
+
+.faq-section h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--dark-gray);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.faq-item {
+  background: var(--white);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.faq-item h4 {
+  color: var(--primary-orange);
+  margin-bottom: 8px;
+}
+
+.faq-item p {
+  color: var(--medium-gray);
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-info {
+    order: 2;
+  }
+}
+
+@media (max-width: 576px) {
+  .contact-info {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+}
