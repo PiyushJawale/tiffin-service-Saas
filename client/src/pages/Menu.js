@@ -11,24 +11,23 @@ const Menu = () => {
   const days = ['All', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   useEffect(() => {
+    const fetchMenu = async () => {
+      try {
+        setLoading(true);
+        let query = {};
+        if (filter !== 'all') query.mealType = filter;
+        if (selectedDay !== 'All') query.day = selectedDay;
+
+        const res = await api.get('/menu', { params: query });
+        setMenuItems(res.data.data);
+      } catch (error) {
+        console.error('Error fetching menu:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchMenu();
   }, [filter, selectedDay]);
-
-  const fetchMenu = async () => {
-    try {
-      setLoading(true);
-      let query = {};
-      if (filter !== 'all') query.mealType = filter;
-      if (selectedDay !== 'All') query.day = selectedDay;
-
-      const res = await api.get('/menu', { params: query });
-      setMenuItems(res.data.data);
-    } catch (error) {
-      console.error('Error fetching menu:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getMealTypeTag = (type) => {
     const classes = {

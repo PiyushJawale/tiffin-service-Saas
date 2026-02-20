@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -7,7 +7,6 @@ import './Subscriptions.css';
 const Subscriptions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [selectedPlan, setSelectedPlan] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const plans = [

@@ -15,10 +15,11 @@ const AdminDashboard = () => {
     fetchDashboardStats();
   }, []);
 
-  useEffect(() => {
+    useEffect(() => {
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'tracking') fetchDeliveries();
     if (activeTab === 'billing') fetchAllBills();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, selectedDate]);
 
   const fetchDashboardStats = async () => {
