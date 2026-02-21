@@ -57,14 +57,20 @@ const Register = () => {
     setLoading(true);
 
     try {
-      await register({
+      const result = await register({
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
         address: formData.address
       });
-      navigate('/dashboard');
+      // After successful registration, user is automatically logged in
+      // Navigate based on user role
+      if (result.data && result.data.role === 'admin') {
+        navigate('/admin');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     } finally {

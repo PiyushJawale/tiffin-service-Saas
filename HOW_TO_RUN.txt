@@ -1,0 +1,84 @@
+================================================================================
+                    MUMBAI TIFFIN SERVICE - HOW TO RUN
+================================================================================
+
+PROJECT STRUCTURE:
+- client/     - React frontend
+- server/     - Node.js/Express backend with MongoDB
+
+--------------------------------------------------------------------------------
+PREREQUISITES:
+--------------------------------------------------------------------------------
+1. Node.js installed (https://nodejs.org)
+2. MongoDB installed and running locally (https://www.mongodb.com)
+
+--------------------------------------------------------------------------------
+STEP 1: INSTALL DEPENDENCIES
+--------------------------------------------------------------------------------
+Open terminal in project root (D:\Projects\tiffin-service) and run:
+
+  npm install --prefix server
+  npm install --prefix client
+
+--------------------------------------------------------------------------------
+STEP 2: SEED DATABASE (First time only or to reset data)
+--------------------------------------------------------------------------------
+  npm run seed --prefix server
+
+This creates test users and sample data.
+
+--------------------------------------------------------------------------------
+STEP 3: START THE SERVER (Backend)
+--------------------------------------------------------------------------------
+  npm start --prefix server
+
+Server will run on: http://localhost:5000
+
+--------------------------------------------------------------------------------
+STEP 4: START THE CLIENT (Frontend) - In a new terminal
+--------------------------------------------------------------------------------
+  npm start --prefix client
+
+Client will run on: http://localhost:3000
+
+--------------------------------------------------------------------------------
+LOGIN CREDENTIALS:
+--------------------------------------------------------------------------------
+Admin Account:
+  Email:    admin@tiffin.com
+  Password: admin123
+
+Demo User Account:
+  Email:    user@tiffin.com
+  Password: user123
+
+--------------------------------------------------------------------------------
+QUICK START (All commands in sequence):
+--------------------------------------------------------------------------------
+1. Open first terminal:
+   npm install --prefix server
+   npm install --prefix client
+   npm run seed --prefix server
+   npm start --prefix server
+
+2. Open second terminal:
+   npm start --prefix client
+
+3. Open browser: http://localhost:3000
+
+--------------------------------------------------------------------------------
+TROUBLESHOOTING:
+--------------------------------------------------------------------------------
+- If MongoDB connection fails, ensure MongoDB service is running
+- If port 5000 is in use, change PORT in server/.env file
+- If port 3000 is in use, React will prompt to use another port
+- If login fails, run: npm run seed --prefix server
+
+--------------------------------------------------------------------------------
+ENVIRONMENT VARIABLES (server/.env):
+--------------------------------------------------------------------------------
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/tiffin-service
+JWT_SECRET=your-secret-key
+
+================================================================================

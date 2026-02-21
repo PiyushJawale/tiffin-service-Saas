@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { ProtectedRoute, AdminRoute } from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import Subscriptions from './pages/Subscriptions';
@@ -26,8 +27,22 @@ function App() {
               <Route path="/subscriptions" element={<Subscriptions />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
+              <Route 
+                path="/dashboard" 
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                } 
+              />
               <Route path="/contact" element={<Contact />} />
             </Routes>
           </main>
