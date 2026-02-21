@@ -97,26 +97,10 @@ const seedData = async () => {
     ]);
     console.log('Test users created:', testUsers.length);
 
-    // Create Menu Items
+    // Create 7 Menu Items - One for each day of the week
     const menuItems = await Menu.insertMany([
-      // Veg Items
       {
-        name: 'Classic Veg Thali',
-        description: 'A complete vegetarian meal with dal, sabzi, roti, rice, and pickle',
-        mealType: 'veg',
-        price: 120,
-        items: ['Dal Tadka', 'Mix Veg Sabzi', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'All',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 650,
-          protein: '18g',
-          carbs: '85g',
-          fat: '22g'
-        }
-      },
-      {
-        name: 'Monday Special Veg',
+        name: 'Monday Special Thali',
         description: 'Start your week with Paneer special and wholesome sides',
         mealType: 'veg',
         price: 150,
@@ -161,7 +145,7 @@ const seedData = async () => {
         }
       },
       {
-        name: 'Thursday Veg Special',
+        name: 'Thursday Special',
         description: 'Delicious Kadhi with crispy pakoras',
         mealType: 'veg',
         price: 135,
@@ -176,7 +160,7 @@ const seedData = async () => {
         }
       },
       {
-        name: 'Friday Veg Treat',
+        name: 'Friday Treat',
         description: 'Weekend vibes with Dal Makhani',
         mealType: 'veg',
         price: 160,
@@ -191,43 +175,12 @@ const seedData = async () => {
         }
       },
       {
-        name: 'Weekend Veg Special',
+        name: 'Saturday Special',
         description: 'Special weekend meal with extra treats',
-        mealType: 'veg',
-        price: 180,
-        items: ['Paneer Tikka Masala', 'Veg Biryani', '2 Rotis', 'Raita', 'Gulab Jamun', 'Salad'],
-        dayOfWeek: 'Saturday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 820,
-          protein: '26g',
-          carbs: '95g',
-          fat: '35g'
-        }
-      },
-      {
-        name: 'Sunday Veg Feast',
-        description: 'Grand Sunday meal with multiple delicacies',
-        mealType: 'veg',
-        price: 200,
-        items: ['Paneer Lababdar', 'Veg Pulao', '3 Rotis', 'Dal Fry', 'Raita', 'Kheer', 'Salad'],
-        dayOfWeek: 'Sunday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 880,
-          protein: '28g',
-          carbs: '100g',
-          fat: '38g'
-        }
-      },
-      // Non-Veg Items
-      {
-        name: 'Classic Non-Veg Thali',
-        description: 'Hearty non-vegetarian meal with chicken curry and sides',
         mealType: 'non-veg',
-        price: 180,
+        price: 220,
         items: ['Chicken Curry', 'Dal Tadka', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'All',
+        dayOfWeek: 'Saturday',
         isAvailable: true,
         nutritionalInfo: {
           calories: 780,
@@ -237,229 +190,18 @@ const seedData = async () => {
         }
       },
       {
-        name: 'Monday Non-Veg Special',
-        description: 'Butter Chicken with fragrant rice',
-        mealType: 'non-veg',
-        price: 220,
-        items: ['Butter Chicken', 'Aloo Gobi', '3 Rotis', 'Jeera Rice', 'Raita', 'Salad'],
-        dayOfWeek: 'Monday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 850,
-          protein: '38g',
-          carbs: '72g',
-          fat: '38g'
-        }
-      },
-      {
-        name: 'Tuesday Non-Veg Delight',
-        description: 'Egg curry special with wholesome sides',
-        mealType: 'non-veg',
-        price: 160,
-        items: ['Egg Curry', 'Bhindi Fry', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'Tuesday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 720,
-          protein: '28g',
-          carbs: '78g',
-          fat: '30g'
-        }
-      },
-      {
-        name: 'Wednesday Non-Veg Feast',
-        description: 'Chicken Tikka Masala with special rice',
-        mealType: 'non-veg',
-        price: 230,
-        items: ['Chicken Tikka Masala', 'Aloo Matar', '3 Rotis', 'Pulao', 'Raita', 'Salad'],
-        dayOfWeek: 'Wednesday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 880,
-          protein: '40g',
-          carbs: '76g',
-          fat: '40g'
-        }
-      },
-      {
-        name: 'Thursday Non-Veg Special',
-        description: 'Mutton curry with traditional sides',
+        name: 'Sunday Grand Feast',
+        description: 'Grand Sunday meal with multiple delicacies',
         mealType: 'non-veg',
         price: 280,
-        items: ['Mutton Curry', 'Baingan Bharta', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'Thursday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 920,
-          protein: '42g',
-          carbs: '74g',
-          fat: '45g'
-        }
-      },
-      {
-        name: 'Friday Non-Veg Treat',
-        description: 'Fish curry special for the weekend',
-        mealType: 'non-veg',
-        price: 250,
-        items: ['Fish Curry', 'Palak Paneer', '3 Rotis', 'Jeera Rice', 'Raita', 'Salad'],
-        dayOfWeek: 'Friday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 800,
-          protein: '38g',
-          carbs: '70g',
-          fat: '36g'
-        }
-      },
-      {
-        name: 'Weekend Non-Veg Special',
-        description: 'Biryani special with chicken and sides',
-        mealType: 'non-veg',
-        price: 300,
         items: ['Chicken Biryani', 'Mirchi Ka Salan', '2 Rotis', 'Raita', 'Gulab Jamun', 'Salad'],
-        dayOfWeek: 'Saturday',
+        dayOfWeek: 'Sunday',
         isAvailable: true,
         nutritionalInfo: {
           calories: 950,
           protein: '42g',
           carbs: '90g',
           fat: '42g'
-        }
-      },
-      {
-        name: 'Sunday Non-Veg Feast',
-        description: 'Grand Sunday feast with multiple non-veg items',
-        mealType: 'non-veg',
-        price: 350,
-        items: ['Mutton Biryani', 'Chicken Korma', '2 Rotis', 'Raita', 'Kheer', 'Salad'],
-        dayOfWeek: 'Sunday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 1050,
-          protein: '48g',
-          carbs: '95g',
-          fat: '48g'
-        }
-      },
-      // Jain Items
-      {
-        name: 'Classic Jain Thali',
-        description: 'Pure Jain meal without onion, garlic, and root vegetables',
-        mealType: 'jain',
-        price: 130,
-        items: ['Dal Fry (No Onion/Garlic)', 'Lauki Sabzi', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'All',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 620,
-          protein: '16g',
-          carbs: '82g',
-          fat: '20g'
-        }
-      },
-      {
-        name: 'Monday Jain Special',
-        description: 'Paneer special prepared Jain style',
-        mealType: 'jain',
-        price: 160,
-        items: ['Paneer Tomato Sabzi', 'Aloo Matar', '3 Rotis', 'Jeera Rice', 'Raita', 'Salad'],
-        dayOfWeek: 'Monday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 680,
-          protein: '20g',
-          carbs: '78g',
-          fat: '26g'
-        }
-      },
-      {
-        name: 'Tuesday Jain Delight',
-        description: 'Traditional Jain meal with variety',
-        mealType: 'jain',
-        price: 140,
-        items: ['Kadhi (No Onion/Garlic)', 'Tinda Masala', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'Tuesday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 640,
-          protein: '18g',
-          carbs: '80g',
-          fat: '22g'
-        }
-      },
-      {
-        name: 'Wednesday Jain Feast',
-        description: 'Mid-week Jain special',
-        mealType: 'jain',
-        price: 150,
-        items: ['Chole (No Onion/Garlic)', 'Aloo Gobi', '3 Rotis', 'Pulao', 'Raita', 'Salad'],
-        dayOfWeek: 'Wednesday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 700,
-          protein: '20g',
-          carbs: '84g',
-          fat: '24g'
-        }
-      },
-      {
-        name: 'Thursday Jain Special',
-        description: 'Rajma prepared Jain style',
-        mealType: 'jain',
-        price: 145,
-        items: ['Rajma Masala (No Onion/Garlic)', 'Parwal Sabzi', '3 Rotis', 'Steamed Rice', 'Pickle', 'Papad'],
-        dayOfWeek: 'Thursday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 660,
-          protein: '19g',
-          carbs: '82g',
-          fat: '21g'
-        }
-      },
-      {
-        name: 'Friday Jain Treat',
-        description: 'Weekend Jain special',
-        mealType: 'jain',
-        price: 170,
-        items: ['Paneer Makhanwala (No Onion/Garlic)', 'Kaddu Sabzi', '3 Rotis', 'Jeera Rice', 'Raita', 'Salad'],
-        dayOfWeek: 'Friday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 740,
-          protein: '22g',
-          carbs: '76g',
-          fat: '30g'
-        }
-      },
-      {
-        name: 'Weekend Jain Special',
-        description: 'Special weekend Jain meal',
-        mealType: 'jain',
-        price: 190,
-        items: ['Paneer Tikka (Jain Style)', 'Veg Biryani (No Onion/Garlic)', '2 Rotis', 'Raita', 'Moong Dal Halwa', 'Salad'],
-        dayOfWeek: 'Saturday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 800,
-          protein: '24g',
-          carbs: '92g',
-          fat: '34g'
-        }
-      },
-      {
-        name: 'Sunday Jain Feast',
-        description: 'Grand Sunday Jain meal',
-        mealType: 'jain',
-        price: 210,
-        items: ['Paneer Lababdar (Jain Style)', 'Veg Pulao', '3 Rotis', 'Dal Fry', 'Raita', 'Rabdi', 'Salad'],
-        dayOfWeek: 'Sunday',
-        isAvailable: true,
-        nutritionalInfo: {
-          calories: 860,
-          protein: '26g',
-          carbs: '98g',
-          fat: '36g'
         }
       }
     ]);

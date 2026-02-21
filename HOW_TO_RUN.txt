@@ -67,18 +67,50 @@ QUICK START (All commands in sequence):
 3. Open browser: http://localhost:3000
 
 --------------------------------------------------------------------------------
+HOW TO USE WITHOUT SEED DATA:
+--------------------------------------------------------------------------------
+1. First time: You need at least ONE admin user to manage the portal
+2. Options to create the first admin:
+   
+   Option A - Use seed data (recommended for first time):
+     npm run seed --prefix server
+     This creates: admin@tiffin.com / admin123
+   
+   Option B - Create admin directly in MongoDB:
+     Use MongoDB Compass or mongosh to insert a user document with role: "admin"
+   
+   Option C - Register via API (using curl):
+     curl -X POST http://localhost:5000/api/auth/register ^
+       -H "Content-Type: application/json" ^
+       -d "{\"name\":\"Admin\",\"email\":\"admin@example.com\",\"phone\":\"+91 12345 67890\",\"password\":\"admin123\",\"address\":{\"street\":\"123 Street\",\"area\":\"Area\",\"city\":\"Mumbai\",\"pincode\":\"400001\"}}"
+     Then manually update the user's role to "admin" in MongoDB
+
+3. After first admin is created:
+   - Login as admin at http://localhost:3000/login
+   - Go to "Users" tab in Admin Dashboard
+   - Click "+ Add New User" button
+   - Fill in details and select Role (User or Admin)
+   - Create as many users/admins as needed
+
+4. Regular users can also self-register:
+   - Go to http://localhost:3000/register
+   - Fill in details and create account
+   - They will have "user" role by default
+
+--------------------------------------------------------------------------------
 TROUBLESHOOTING:
 --------------------------------------------------------------------------------
 - If MongoDB connection fails, ensure MongoDB service is running
 - If port 5000 is in use, change PORT in server/.env file
 - If port 3000 is in use, React will prompt to use another port
 - If login fails, run: npm run seed --prefix server
+- If server crashes, restart it: npm start --prefix server
 
 --------------------------------------------------------------------------------
 ENVIRONMENT VARIABLES (server/.env):
 --------------------------------------------------------------------------------
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/tiffin-service
-JWT_SECRET=your-secret-key
+JWT_SECRET=your-super-secret-jwt-key-change-in-production
 
 ================================================================================

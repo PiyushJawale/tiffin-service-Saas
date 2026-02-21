@@ -94,6 +94,82 @@ router.put('/:id', protect, async (req, res) => {
   }
 });
 
+// @route   PUT /api/subscriptions/:id/pause
+// @desc    Pause subscription
+// @access  Private
+router.put('/:id/pause', protect, async (req, res) => {
+  try {
+    const subscription = await Subscription.findById(req.params.id);
+
+    if (!subscription) {
+      return res.status(404).json({
+        success: false,
+        message: 'Subscription not found'
+      });
+    }
+
+    // Check if user owns subscription
+    if (subscription.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized'
+      });
+    }
+
+    subscription.status = 'paused';
+    await subscription.save();
+
+    res.json({
+      success: true,
+      message: 'Subscription paused successfully',
+      data: subscription
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+// @route   PUT /api/subscriptions/:id/resume
+// @desc    Resume paused subscription
+// @access  Private
+router.put('/:id/resume', protect, async (req, res) => {
+  try {
+    const subscription = await Subscription.findById(req.params.id);
+
+    if (!subscription) {
+      return res.status(404).json({
+        success: false,
+        message: 'Subscription not found'
+      });
+    }
+
+    // Check if user owns subscription
+    if (subscription.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized'
+      });
+    }
+
+    subscription.status = 'active';
+    await subscription.save();
+
+    res.json({
+      success: true,
+      message: 'Subscription resumed successfully',
+      data: subscription
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 // @route   DELETE /api/subscriptions/:id
 // @desc    Cancel subscription
 // @access  Private

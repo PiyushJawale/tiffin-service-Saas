@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import './Menu.css';
 
 const Menu = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [selectedDay, setSelectedDay] = useState('All');
+  const [subscribing, setSubscribing] = useState(null);
+  const [showSuccess, setShowSuccess] = useState('');
 
   const days = ['All', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -41,6 +47,31 @@ const Menu = () => {
       'jain': '🧅 Jain'
     };
     return <span className={`tag ${classes[type]}`}>{labels[type]}</span>;
+  };
+
+  const handleSubscribe = async (item) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setSubscribing(item._id);
+    try {
+      await api.post('/subscriptions', {
+        planType: 'monthly',
+        mealType: item.mealType,
+        pricePerTiffin: item.price,
+        days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        deliveryTime: 'lunch'
+      });
+      setShowSuccess(`Subscribed to ${item.name}!`);
+      setTimeout(() => setShowSuccess(''), 3000);
+    } catch (error) {
+      console.error('Subscription error:', error);
+      alert('Failed to subscribe. Please try again.');
+    } finally {
+      setSubscribing(null);
+    }
   };
 
   return (
@@ -99,6 +130,13 @@ const Menu = () => {
           </div>
         </div>
 
+        {/* Success Message */}
+        {showSuccess && (
+          <div className="success-banner">
+            ✅ {showSuccess}
+          </div>
+        )}
+
         {/* Menu Grid */}
         {loading ? (
           <div className="loader"></div>
@@ -127,8 +165,17 @@ const Menu = () => {
                     </div>
                   )}
                   <div className="menu-footer">
-                    <span className="menu-price">₹{item.price}</span>
-                    <span className="per-tiffin">per tiffin</span>
+                    <div className="price-info">
+                      <span className="menu-price">₹{item.price}</span>
+                      <span className="per-tiffin">per tiffin</span>
+                    </div>
+                    <button
+                      className="btn btn-primary subscribe-btn"
+                      onClick={() => handleSubscribe(item)}
+                      disabled={subscribing === item._id}
+                    >
+                      {subscribing === item._id ? 'Subscribing...' : 'Subscribe'}
+                    </button>
                   </div>
                 </div>
               ))

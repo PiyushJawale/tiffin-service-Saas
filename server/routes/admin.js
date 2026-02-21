@@ -6,6 +6,45 @@ const DailyDelivery = require('../models/DailyDelivery');
 const Bill = require('../models/Bill');
 const { protect, adminOnly } = require('../middleware/auth');
 
+// @route   POST /api/admin/users
+// @desc    Create a new user (admin or regular)
+// @access  Private/Admin
+router.post('/users', protect, adminOnly, async (req, res) => {
+  try {
+    const { name, email, phone, password, address, role } = req.body;
+
+    // Check if user exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'User already exists with this email'
+      });
+    }
+
+    // Create user
+    const user = await User.create({
+      name,
+      email,
+      phone,
+      password,
+      address,
+      role: role || 'user'
+    });
+
+    res.status(201).json({
+      success: true,
+      data: user,
+      message: `${role === 'admin' ? 'Admin' : 'User'} created successfully`
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 // @route   GET /api/admin/users
 // @desc    Get all users with subscriptions
 // @access  Private/Admin

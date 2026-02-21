@@ -10,6 +10,17 @@ const AdminDashboard = () => {
   const [deliveries, setDeliveries] = useState([]);
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [newUser, setNewUser] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    role: 'user',
+    address: { street: '', area: '', city: 'Mumbai', pincode: '' }
+  });
+  const [addUserError, setAddUserError] = useState('');
+  const [addUserSuccess, setAddUserSuccess] = useState('');
 
   useEffect(() => {
     fetchDashboardStats();
@@ -98,6 +109,37 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleAddUser = async (e) => {
+    e.preventDefault();
+    setAddUserError('');
+    setAddUserSuccess('');
+
+    if (newUser.password.length < 6) {
+      setAddUserError('Password must be at least 6 characters');
+      return;
+    }
+
+    try {
+      const res = await api.post('/admin/users', newUser);
+      setAddUserSuccess(res.data.message);
+      setNewUser({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        role: 'user',
+        address: { street: '', area: '', city: 'Mumbai', pincode: '' }
+      });
+      fetchUsers();
+      setTimeout(() => {
+        setShowAddUserModal(false);
+        setAddUserSuccess('');
+      }, 2000);
+    } catch (error) {
+      setAddUserError(error.response?.data?.message || 'Failed to create user');
+    }
+  };
+
   return (
     <div className="admin-page">
       <div className="container">
@@ -166,6 +208,140 @@ const AdminDashboard = () => {
         {/* Users Tab */}
         {activeTab === 'users' && (
           <div className="users-content">
+            <div className="users-header">
+              <button 
+                className="btn btn-primary"
+                onClick={() => setShowAddUserModal(true)}
+              >
+                + Add New User
+              </button>
+            </div>
+
+            {/* Add User Modal */}
+            {showAddUserModal && (
+              <div className="modal-overlay">
+                <div className="modal">
+                  <div className="modal-header">
+                    <h3>Add New User</h3>
+                    <button 
+                      className="modal-close"
+                      onClick={() => {
+                        setShowAddUserModal(false);
+                        setAddUserError('');
+                        setAddUserSuccess('');
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </div>
+                  <form onSubmit={handleAddUser} className="modal-form">
+                    {addUserError && <div className="error-message">{addUserError}</div>}
+                    {addUserSuccess && <div className="success-message">{addUserSuccess}</div>}
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Full Name</label>
+                        <input
+                          type="text"
+                          value={newUser.name}
+                          onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Phone</label>
+                        <input
+                          type="tel"
+                          value={newUser.phone}
+                          onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                          required
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Email</label>
+                      <input
+                        type="email"
+                        value={newUser.email}
+                        onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                        required
+                      />
+                    </div>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Password</label>
+                        <input
+                          type="password"
+                          value={newUser.password}
+                          onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                          required
+                          minLength="6"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Role</label>
+                        <select
+                          value={newUser.role}
+                          onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                        >
+                          <option value="user">User</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="form-group">
+                      <label>Street Address</label>
+                      <input
+                        type="text"
+                        value={newUser.address.street}
+                        onChange={(e) => setNewUser({
+                          ...newUser, 
+                          address: {...newUser.address, street: e.target.value}
+                        })}
+                      />
+                    </div>
+                    
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Area</label>
+                        <input
+                          type="text"
+                          value={newUser.address.area}
+                          onChange={(e) => setNewUser({
+                            ...newUser, 
+                            address: {...newUser.address, area: e.target.value}
+                          })}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Pincode</label>
+                        <input
+                          type="text"
+                          value={newUser.address.pincode}
+                          onChange={(e) => setNewUser({
+                            ...newUser, 
+                            address: {...newUser.address, pincode: e.target.value}
+                          })}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="modal-actions">
+                      <button type="button" className="btn btn-secondary" onClick={() => setShowAddUserModal(false)}>
+                        Cancel
+                      </button>
+                      <button type="submit" className="btn btn-primary">
+                        Create User
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
+
             {loading ? <div className="loader"></div> : (
               <div className="users-table">
                 <table>
