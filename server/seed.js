@@ -14,7 +14,16 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/tiffin-se
 
 const seedData = async () => {
   try {
-    // Clear existing data
+    // Check if data already exists
+    const existingUsers = await User.countDocuments();
+    const existingMenus = await Menu.countDocuments();
+    
+    if (existingUsers > 0 && existingMenus > 0) {
+      console.log('Database already seeded. Skipping...');
+      return;
+    }
+    
+    // Clear existing data only if needed
     await User.deleteMany({});
     await Menu.deleteMany({});
     await Subscription.deleteMany({});
@@ -53,48 +62,65 @@ const seedData = async () => {
     });
     console.log('Demo user created:', demoUser.email);
 
-    // Create additional test users
-    const testUsers = await User.insertMany([
-      {
-        name: 'Priya Sharma',
-        email: 'priya@example.com',
-        phone: '+91 98765 43212',
-        password: 'user123',
-        role: 'user',
-        address: {
-          street: '789 Hill Road',
-          area: 'Juhu',
-          city: 'Mumbai',
-          pincode: '400049'
-        }
-      },
-      {
-        name: 'Rahul Patel',
-        email: 'rahul@example.com',
-        phone: '+91 98765 43213',
-        password: 'user123',
-        role: 'user',
-        address: {
-          street: '101 Marine Drive',
-          area: 'Churchgate',
-          city: 'Mumbai',
-          pincode: '400020'
-        }
-      },
-      {
-        name: 'Anita Desai',
-        email: 'anita@example.com',
-        phone: '+91 98765 43214',
-        password: 'user123',
-        role: 'user',
-        address: {
-          street: '202 Linking Road',
-          area: 'Khar West',
-          city: 'Mumbai',
-          pincode: '400052'
-        }
+    // Create additional test users (using create() to trigger password hashing middleware)
+    const piyush = await User.create({
+      name: 'Piyush Jawale',
+      email: 'piyushjawale.applications@gmail.com',
+      phone: '+353892024804',
+      password: 'password123',
+      role: 'user',
+      address: {
+        street: '39 Aderig Avenue',
+        area: 'Adamstown',
+        city: 'Dublin',
+        pincode: 'K78 F9Y0'
       }
-    ]);
+    });
+    console.log('Piyush user created:', piyush.email);
+
+    const priya = await User.create({
+      name: 'Priya Sharma',
+      email: 'priya@example.com',
+      phone: '+91 98765 43212',
+      password: 'user123',
+      role: 'user',
+      address: {
+        street: '789 Hill Road',
+        area: 'Juhu',
+        city: 'Mumbai',
+        pincode: '400049'
+      }
+    });
+
+    const rahul = await User.create({
+      name: 'Rahul Patel',
+      email: 'rahul@example.com',
+      phone: '+91 98765 43213',
+      password: 'user123',
+      role: 'user',
+      address: {
+        street: '101 Marine Drive',
+        area: 'Churchgate',
+        city: 'Mumbai',
+        pincode: '400020'
+      }
+    });
+
+    const anita = await User.create({
+      name: 'Anita Desai',
+      email: 'anita@example.com',
+      phone: '+91 98765 43214',
+      password: 'user123',
+      role: 'user',
+      address: {
+        street: '202 Linking Road',
+        area: 'Khar West',
+        city: 'Mumbai',
+        pincode: '400052'
+      }
+    });
+
+    const testUsers = [piyush, priya, rahul, anita];
     console.log('Test users created:', testUsers.length);
 
     // Create 7 Menu Items - One for each day of the week
@@ -256,11 +282,12 @@ const seedData = async () => {
     console.log('\n📋 Login Credentials:');
     console.log('Admin: admin@tiffin.com / admin123');
     console.log('User:  user@tiffin.com / user123');
-    
-    process.exit(0);
+    console.log('Piyush: piyushjawale.applications@gmail.com / password123');
   } catch (error) {
     console.error('Error seeding data:', error);
-    process.exit(1);
+  } finally {
+    // Close mongoose connection so the script can exit
+    await mongoose.disconnect();
   }
 };
 

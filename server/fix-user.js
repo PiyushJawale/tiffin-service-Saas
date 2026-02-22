@@ -17,23 +17,41 @@ const fixUser = async () => {
     const plainPassword = 'Venompj@123';
 
     // Find the user
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ email });
     
     if (!user) {
-      console.log('User not found');
-      process.exit(1);
+      // Create the user if not found
+      console.log('User not found, creating new user...');
+      
+      user = await User.create({
+        name: 'Piyush Prabhakar Jawale',
+        email: email,
+        phone: '+353892024804',
+        password: plainPassword,  // Will be hashed by pre-save hook
+        address: {
+          street: '39 ADERIG AVENUE,ADAMSTOWN, COUNTY DUBLIN',
+          area: 'Kalyan',
+          city: 'Mumbai',
+          pincode: 'K78 F9Y0'
+        },
+        role: 'user',
+        isActive: true
+      });
+      
+      console.log('✅ User created successfully!');
+    } else {
+      console.log('Found user:', user.email);
+
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(plainPassword, 12);
+      
+      // Update the user's password
+      user.password = hashedPassword;
+      await user.save();
+
+      console.log('✅ Password updated successfully!');
     }
 
-    console.log('Found user:', user.email);
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(plainPassword, 12);
-    
-    // Update the user's password
-    user.password = hashedPassword;
-    await user.save();
-
-    console.log('✅ Password updated successfully!');
     console.log('You can now login with:');
     console.log('Email:', email);
     console.log('Password:', plainPassword);

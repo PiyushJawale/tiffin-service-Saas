@@ -9,6 +9,7 @@ const AdminDashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [deliveries, setDeliveries] = useState([]);
   const [bills, setBills] = useState([]);
+  const [currentMonthStats, setCurrentMonthStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -69,13 +70,21 @@ const AdminDashboard = () => {
   const fetchAllBills = async () => {
     try {
       setLoading(true);
-      const res = await api.get('/admin/monthly-report', {
+      const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
+      
+      // Fetch current month delivery stats (amount till date)
+      const statsRes = await api.get('/admin/monthly-report', {
         params: {
-          month: new Date().getMonth() + 1,
-          year: new Date().getFullYear()
+          month: currentMonth,
+          year: currentYear
         }
       });
-      setBills(res.data.data);
+      setCurrentMonthStats(statsRes.data.data);
+      
+      // Fetch all generated bills
+      const billsRes = await api.get('/bills/all');
+      setBills(billsRes.data.data);
     } catch (error) {
       console.error('Error fetching bills:', error);
     } finally {
@@ -96,17 +105,29 @@ const AdminDashboard = () => {
 
   const generateBills = async () => {
     try {
-      const month = new Date().getMonth();
-      const year = new Date().getFullYear();
+      setLoading(true);
+      // Generate bills for current month
+      const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
+      
       const res = await api.post('/bills/generate-all', {
-        month: month === 0 ? 12 : month,
-        year: month === 0 ? year - 1 : year
+        month: currentMonth,
+        year: currentYear
       });
       alert(res.data.message);
       fetchAllBills();
     } catch (error) {
       console.error('Error generating bills:', error);
+      alert(error.response?.data?.message || 'Error generating bills');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const getMonthName = (month) => {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+    return months[month - 1];
   };
 
   const handleAddUser = async (e) => {
@@ -446,33 +467,75 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            {loading ? <div className="loader"></div> : (
-              <div className="billing-list">
-                {bills.map((item, index) => (
-                  <div key={index} className="billing-item">
-                    <div className="billing-user">
-                      <strong>{item.user?.name}</strong>
-                      <span>{item.user?.address?.area}</span>
+            {/* Current Month Stats - Amount Till Date */}
+            {currentMonthStats && currentMonthStats.length > 0 && (
+              <div className="current-month-section">
+                <h4>📊 Current Month - Amount Till Date ({getMonthName(new Date().getMonth() + 1)} {new Date().getFullYear()})</h4>
+                <div className="billing-list">
+                  {currentMonthStats.map((item, index) => (
+                    <div key={`current-${index}`} className="billing-item current-month">
+                      <div className="billing-user">
+                        <strong>{item.user?.name}</strong>
+                        <span>{item.user?.address?.area}</span>
+                      </div>
+                      <div className="billing-stats">
+                        <div className="stat">
+                          <label>Delivered</label>
+                          <span>{item.deliveredDays} / {item.totalDays}</span>
+                        </div>
+                        <div className="stat">
+                          <label>Price/Tiffin</label>
+                          <span>₹{item.subscription?.pricePerTiffin}</span>
+                        </div>
+                        <div className="stat total-amount">
+                          <label>Amount Till Date</label>
+                          <span className="amount">₹{item.billAmount}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="billing-stats">
-                      <div className="stat">
-                        <label>Tiffins Delivered</label>
-                        <span>{item.deliveredDays}</span>
-                      </div>
-                      <div className="stat">
-                        <label>Price/Tiffin</label>
-                        <span>₹{item.subscription?.pricePerTiffin}</span>
-                      </div>
-                      <div className="stat total-amount">
-                        <label>Total Bill</label>
-                        <span className="amount">₹{item.billAmount}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {bills.length === 0 && <p className="no-data">No billing data available</p>}
+                  ))}
+                </div>
               </div>
             )}
+
+            {/* Generated Bills Section */}
+            <div className="generated-bills-section">
+              <h4>📄 Generated Bills</h4>
+              {loading ? <div className="loader"></div> : (
+                <div className="billing-list">
+                  {bills.map((bill, index) => (
+                    <div key={index} className="billing-item">
+                      <div className="billing-user">
+                        <strong>{bill.user?.name}</strong>
+                        <span>{bill.user?.address?.area}</span>
+                        <span className={`badge badge-${bill.status === 'paid' ? 'success' : 'warning'}`}>
+                          {bill.status}
+                        </span>
+                      </div>
+                      <div className="billing-stats">
+                        <div className="stat">
+                          <label>Period</label>
+                          <span>{getMonthName(bill.month)} {bill.year}</span>
+                        </div>
+                        <div className="stat">
+                          <label>Tiffins</label>
+                          <span>{bill.totalTiffins}</span>
+                        </div>
+                        <div className="stat">
+                          <label>Price/Tiffin</label>
+                          <span>₹{bill.pricePerTiffin}</span>
+                        </div>
+                        <div className="stat total-amount">
+                          <label>Total Amount</label>
+                          <span className="amount">₹{bill.totalAmount}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {bills.length === 0 && <p className="no-data">No bills generated yet. Click "Generate Bills" to create bills.</p>}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
