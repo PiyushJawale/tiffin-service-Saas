@@ -3,6 +3,203 @@
   min-height: 80vh;
 }
 
+/* Billing Summary Card */
+.billing-summary-card {
+  background: #FF6B35 !important;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%) !important;
+  padding: 30px;
+  border-radius: 20px;
+  color: #FFFFFF !important;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
+  border: 2px solid #FF6B35;
+}
+
+.billing-summary-card * {
+  color: #FFFFFF !important;
+}
+
+.billing-summary-card .amount {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.billing-summary-card .label {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Tags inside billing card - white background for visibility */
+.billing-summary-card .tag {
+  background: white;
+  color: #FF6B35;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.billing-summary-card .tag-veg {
+  background: white;
+  color: #4CAF50;
+}
+
+.billing-summary-card .tag-nonveg {
+  background: white;
+  color: #FF6B35;
+}
+
+.billing-summary-card .tag-jain {
+  background: white;
+  color: #FFB300;
+}
+
+.billing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.billing-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.month-label {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.billing-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.billing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.billing-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.billing-item .label {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.billing-item .amount {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.billing-total {
+  padding-top: 16px;
+}
+
+.total-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.total-item .label {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.total-item .amount {
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.extra-orders-note {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.extra-orders-note small {
+  opacity: 0.9;
+}
+
+/* Extra Orders List */
+.extra-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.extra-order-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white);
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.order-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-date {
+  color: var(--medium-gray);
+  font-size: 14px;
+}
+
+.order-price {
+  font-weight: 600;
+  color: var(--primary-orange);
+}
+
+/* Subscription Actions */
+.subscription-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-danger {
+  background: var(--red);
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #D32F2F;
+}
+
+.btn-warning {
+  background: #FF9800;
+  color: white;
+}
+
+.btn-warning:hover {
+  background: #F57C00;
+}
+
+.btn-success {
+  background: var(--fresh-green);
+  color: white;
+}
+
+.btn-success:hover {
+  background: #388E3C;
+}
+
 .dashboard-header {
   margin-bottom: 40px;
 }
@@ -113,6 +310,31 @@
 .no-subscription p {
   margin-bottom: 20px;
   color: var(--medium-gray);
+}
+
+/* Tags - General */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.tag-veg {
+  background: #E8F5E9;
+  color: #4CAF50;
+}
+
+.tag-nonveg {
+  background: #FFEBEE;
+  color: #FF6B35;
+}
+
+.tag-jain {
+  background: #FFF8E1;
+  color: #FFB300;
 }
 
 /* Badges */

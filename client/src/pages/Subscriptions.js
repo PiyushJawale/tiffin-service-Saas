@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -8,138 +8,158 @@ const Subscriptions = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [pricing, setPricing] = useState(null);
+  const [existingSubscription, setExistingSubscription] = useState(null);
 
-  const plans = [
-    {
-      id: 'daily',
-      name: 'Daily Tiffin',
-      description: 'Fresh tiffin delivered every day',
-      vegPrice: 120,
-      nonVegPrice: 150,
-      jainPrice: 130,
-      features: [
-        'Lunch & Dinner options',
-        'Free delivery',
-        'Pause anytime',
-        'Monthly billing'
-      ],
-      popular: false
-    },
-    {
-      id: 'weekly',
-      name: 'Weekly Plan',
-      description: 'Choose your preferred days',
-      vegPrice: 110,
-      nonVegPrice: 140,
-      jainPrice: 120,
-      features: [
-        'Select 5-7 days per week',
-        '10% discount on daily price',
-        'Flexible day selection',
-        'Weekly menu variety'
-      ],
-      popular: true
-    },
-    {
-      id: 'monthly',
-      name: 'Monthly Subscription',
-      description: 'Best value for regular customers',
-      vegPrice: 100,
-      nonVegPrice: 130,
-      jainPrice: 110,
-      features: [
-        '20% discount on daily price',
-        'Priority delivery',
-        'Special Sunday meals',
-        'Festival specials included'
-      ],
-      popular: false
+  useEffect(() => {
+    fetchPricing();
+    if (user) {
+      checkExistingSubscription();
     }
-  ];
+  }, [user]);
 
-  const handleSubscribe = async (plan, mealType, price) => {
+  const fetchPricing = async () => {
+    try {
+      const res = await api.get('/subscriptions/pricing');
+      setPricing(res.data.data);
+    } catch (error) {
+      console.error('Error fetching pricing:', error);
+    }
+  };
+
+  const checkExistingSubscription = async () => {
+    try {
+      const res = await api.get('/subscriptions');
+      const activeSub = res.data.data.find(s => s.status === 'active' || s.status === 'paused');
+      setExistingSubscription(activeSub);
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
+
+  const handleSubscribe = async (mealType) => {
     if (!user) {
       navigate('/login');
+      return;
+    }
+
+    if (existingSubscription) {
+      alert('You already have an active subscription. Please cancel it first to subscribe to a new plan.');
       return;
     }
 
     setLoading(true);
     try {
       await api.post('/subscriptions', {
-        planType: plan.id,
         mealType: mealType,
-        pricePerTiffin: price,
-        days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        deliveryTime: 'lunch'
       });
       navigate('/dashboard');
     } catch (error) {
       console.error('Subscription error:', error);
+      alert(error.response?.data?.message || 'Failed to subscribe. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  const mealTypes = pricing ? [
+    {
+      id: 'veg',
+      name: 'Veg Tiffin',
+      description: 'Delicious vegetarian meals with fresh vegetables and dal',
+      monthlyPrice: pricing.veg.monthlyPrice,
+      pricePerTiffin: pricing.veg.pricePerTiffin,
+      icon: '🥬',
+      features: [
+        'Fresh seasonal vegetables',
+        'Dal & rice included',
+        'Roti/Chapati',
+        'Salad & pickle'
+      ]
+    },
+    {
+      id: 'non-veg',
+      name: 'Non-Veg Tiffin',
+      description: 'Complete meals with chicken, fish or egg preparations',
+      monthlyPrice: pricing['non-veg'].monthlyPrice,
+      pricePerTiffin: pricing['non-veg'].pricePerTiffin,
+      icon: '🍗',
+      features: [
+        'Chicken/Fish preparations',
+        'Egg dishes included',
+        'Dal & rice included',
+        'Roti/Chapati'
+      ]
+    },
+    {
+      id: 'jain',
+      name: 'Jain Tiffin',
+      description: 'Pure Jain meals without onion, garlic and root vegetables',
+      monthlyPrice: pricing.jain.monthlyPrice,
+      pricePerTiffin: pricing.jain.pricePerTiffin,
+      icon: '🧅',
+      features: [
+        'No onion & garlic',
+        'No root vegetables',
+        'Fresh preparations',
+        'Traditional recipes'
+      ]
+    }
+  ] : [];
+
   return (
     <div className="subscriptions-page">
       <div className="container">
         <div className="page-header">
-          <h1 className="page-title">Choose Your Plan</h1>
+          <h1 className="page-title">Choose Your Subscription</h1>
           <p className="page-subtitle">
-            Flexible subscription options to suit your needs
+            Simple monthly subscription plans for delicious homemade meals
           </p>
         </div>
 
+        {existingSubscription && (
+          <div className="existing-subscription-notice">
+            <p>⚠️ You already have an active <strong>{existingSubscription.mealType}</strong> subscription.</p>
+            <p>Visit your <a href="/dashboard">dashboard</a> to manage it.</p>
+          </div>
+        )}
+
         {/* Pricing Cards */}
         <div className="plans-grid">
-          {plans.map(plan => (
+          {mealTypes.map(meal => (
             <div 
-              key={plan.id} 
-              className={`plan-card ${plan.popular ? 'popular' : ''}`}
+              key={meal.id} 
+              className={`plan-card ${meal.id === 'non-veg' ? 'popular' : ''}`}
             >
-              {plan.popular && <div className="popular-badge">Most Popular</div>}
-              <h3 className="plan-name">{plan.name}</h3>
-              <p className="plan-description">{plan.description}</p>
+              {meal.id === 'non-veg' && <div className="popular-badge">Most Popular</div>}
+              <div className="plan-icon">{meal.icon}</div>
+              <h3 className="plan-name">{meal.name}</h3>
+              <p className="plan-description">{meal.description}</p>
               
-              <div className="plan-prices">
-                <div className="price-option">
-                  <span className="tag tag-veg">Veg</span>
-                  <span className="price">₹{plan.vegPrice}</span>
-                  <span className="price-unit">/tiffin</span>
+              <div className="plan-pricing">
+                <div className="monthly-price">
+                  <span className="price">₹{meal.monthlyPrice}</span>
+                  <span className="price-unit">/month</span>
                 </div>
-                <div className="price-option">
-                  <span className="tag tag-nonveg">Non-Veg</span>
-                  <span className="price">₹{plan.nonVegPrice}</span>
-                  <span className="price-unit">/tiffin</span>
-                </div>
-                <div className="price-option">
-                  <span className="tag tag-jain">Jain</span>
-                  <span className="price">₹{plan.jainPrice}</span>
-                  <span className="price-unit">/tiffin</span>
+                <div className="per-tiffin">
+                  <span>₹{meal.pricePerTiffin} per tiffin</span>
                 </div>
               </div>
 
               <ul className="plan-features">
-                {plan.features.map((feature, idx) => (
+                {meal.features.map((feature, idx) => (
                   <li key={idx}>✓ {feature}</li>
                 ))}
               </ul>
 
-              <div className="plan-actions">
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleSubscribe(plan, 'veg', plan.vegPrice)}
-                  disabled={loading}
-                >
-                  Subscribe Veg
-                </button>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => handleSubscribe(plan, 'non-veg', plan.nonVegPrice)}
-                  disabled={loading}
-                >
-                  Subscribe Non-Veg
-                </button>
-              </div>
+              <button
+                className="btn btn-primary subscribe-btn"
+                onClick={() => handleSubscribe(meal.id)}
+                disabled={loading || existingSubscription}
+              >
+                {loading ? 'Processing...' : 'Subscribe Now'}
+              </button>
             </div>
           ))}
         </div>
@@ -147,24 +167,24 @@ const Subscriptions = () => {
         {/* Info Section */}
         <div className="subscription-info">
           <div className="info-card">
-            <h3>📋 How Billing Works</h3>
+            <h3>📋 How It Works</h3>
             <p>
-              At the end of each month, you'll only be charged for the tiffins actually delivered. 
-              For example, if you took 28 tiffins in January at ₹120 each, your bill will be ₹3,360.
+              Subscribe to a monthly plan and get fresh tiffin delivered daily. 
+              You can also order extra tiffins from today's menu anytime.
+            </p>
+          </div>
+          <div className="info-card">
+            <h3>💰 Billing</h3>
+            <p>
+              Monthly subscription is charged at the beginning of each month. 
+              Extra tiffins ordered are added to your monthly bill.
             </p>
           </div>
           <div className="info-card">
             <h3>🔄 Pause & Resume</h3>
             <p>
-              Going on vacation? You can pause your subscription anytime and resume when you're back. 
-              No charges during paused period.
-            </p>
-          </div>
-          <div className="info-card">
-            <h3>📍 Delivery Areas</h3>
-            <p>
-              We currently serve: Andheri, Bandra, Dadar, Churchgate, Powai, Juhu, 
-              Santacruz, Khar, Matunga, and surrounding areas.
+              Going on vacation? You can pause your subscription anytime from your dashboard 
+              and resume when you're back.
             </p>
           </div>
         </div>

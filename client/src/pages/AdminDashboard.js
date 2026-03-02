@@ -27,7 +27,7 @@ const AdminDashboard = () => {
     fetchDashboardStats();
   }, []);
 
-    useEffect(() => {
+  useEffect(() => {
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'tracking') fetchDeliveries();
     if (activeTab === 'billing') fetchAllBills();
@@ -104,9 +104,10 @@ const AdminDashboard = () => {
   };
 
   const generateBills = async () => {
+    if (!window.confirm('Generate bills for all users for this month?')) return;
+    
     try {
       setLoading(true);
-      // Generate bills for current month
       const currentMonth = new Date().getMonth() + 1;
       const currentYear = new Date().getFullYear();
       
@@ -121,6 +122,16 @@ const AdminDashboard = () => {
       alert(error.response?.data?.message || 'Error generating bills');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const markBillAsPaid = async (billId) => {
+    try {
+      await api.put(`/bills/${billId}/pay`);
+      fetchAllBills();
+    } catch (error) {
+      console.error('Error marking bill as paid:', error);
+      alert('Failed to mark bill as paid');
     }
   };
 
@@ -372,7 +383,7 @@ const AdminDashboard = () => {
                       <th>Phone</th>
                       <th>Area</th>
                       <th>Meal Type</th>
-                      <th>Price/Tiffin</th>
+                      <th>Monthly Price</th>
                       <th>Status</th>
                     </tr>
                   </thead>
@@ -387,7 +398,7 @@ const AdminDashboard = () => {
                             {user.subscription?.mealType || 'N/A'}
                           </span>
                         </td>
-                        <td>₹{user.subscription?.pricePerTiffin || '-'}</td>
+                        <td>₹{user.subscription?.monthlyPrice || '-'}</td>
                         <td>
                           <span className={`badge badge-${user.subscription?.status === 'active' ? 'success' : 'warning'}`}>
                             {user.subscription?.status || 'No subscription'}
@@ -477,15 +488,18 @@ const AdminDashboard = () => {
                       <div className="billing-user">
                         <strong>{item.user?.name}</strong>
                         <span>{item.user?.address?.area}</span>
+                        <span className={`tag tag-${item.subscription?.mealType}`}>
+                          {item.subscription?.mealType}
+                        </span>
                       </div>
                       <div className="billing-stats">
                         <div className="stat">
-                          <label>Delivered</label>
-                          <span>{item.deliveredDays} / {item.totalDays}</span>
+                          <label>Subscription</label>
+                          <span>₹{item.subscription?.monthlyPrice || '-'}</span>
                         </div>
                         <div className="stat">
-                          <label>Price/Tiffin</label>
-                          <span>₹{item.subscription?.pricePerTiffin}</span>
+                          <label>Delivered Days</label>
+                          <span>{item.deliveredDays} / {item.totalDays}</span>
                         </div>
                         <div className="stat total-amount">
                           <label>Amount Till Date</label>
@@ -518,18 +532,30 @@ const AdminDashboard = () => {
                           <span>{getMonthName(bill.month)} {bill.year}</span>
                         </div>
                         <div className="stat">
-                          <label>Tiffins</label>
-                          <span>{bill.totalTiffins}</span>
+                          <label>Subscription</label>
+                          <span>₹{bill.subscriptionAmount || '-'}</span>
                         </div>
-                        <div className="stat">
-                          <label>Price/Tiffin</label>
-                          <span>₹{bill.pricePerTiffin}</span>
-                        </div>
+                        {bill.extraTiffinsCount > 0 && (
+                          <div className="stat">
+                            <label>Extra Tiffins ({bill.extraTiffinsCount})</label>
+                            <span>₹{bill.extraTiffinsAmount}</span>
+                          </div>
+                        )}
                         <div className="stat total-amount">
                           <label>Total Amount</label>
                           <span className="amount">₹{bill.totalAmount}</span>
                         </div>
                       </div>
+                      {bill.status === 'pending' && (
+                        <div className="bill-actions">
+                          <button 
+                            className="btn btn-success btn-sm"
+                            onClick={() => markBillAsPaid(bill._id)}
+                          >
+                            Mark as Paid
+                          </button>
+                        </div>
+                      )}
                     </div>
                   ))}
                   {bills.length === 0 && <p className="no-data">No bills generated yet. Click "Generate Bills" to create bills.</p>}

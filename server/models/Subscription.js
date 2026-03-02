@@ -6,11 +6,6 @@ const subscriptionSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  planType: {
-    type: String,
-    enum: ['daily', 'weekly', 'monthly'],
-    required: true
-  },
   mealType: {
     type: String,
     enum: ['veg', 'non-veg', 'jain'],
@@ -21,10 +16,11 @@ const subscriptionSchema = new mongoose.Schema({
     required: true,
     min: 0
   },
-  days: [{
-    type: String,
-    enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-  }],
+  monthlyPrice: {
+    type: Number,
+    required: true,
+    min: 0
+  },
   startDate: {
     type: Date,
     required: true,
@@ -50,5 +46,8 @@ const subscriptionSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Index for efficient queries
+subscriptionSchema.index({ user: 1, status: 1 });
 
 module.exports = mongoose.model('Subscription', subscriptionSchema);

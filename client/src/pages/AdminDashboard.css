@@ -452,6 +452,42 @@
   color: #D97706;
 }
 
+/* Bill Actions */
+.bill-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #E0E0E0;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-veg {
+  background: #E8F5E9;
+  color: var(--fresh-green);
+}
+
+.tag-nonveg {
+  background: #FFEBEE;
+  color: var(--red);
+}
+
+.tag-jain {
+  background: #FFF8E1;
+  color: #F9A825;
+}
+
 /* Loader */
 .loader {
   width: 40px;

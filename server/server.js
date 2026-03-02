@@ -25,6 +25,7 @@ app.use('/api/subscriptions', require('./routes/subscriptions'));
 app.use('/api/deliveries', require('./routes/deliveries'));
 app.use('/api/bills', require('./routes/bills'));
 app.use('/api/admin', require('./routes/admin'));
+app.use('/api/extra-tiffins', require('./routes/extraTiffins'));
 
 // Health check route
 app.get('/api/health', (req, res) => {

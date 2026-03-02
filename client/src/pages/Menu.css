@@ -224,6 +224,142 @@
   color: var(--medium-gray);
 }
 
+/* Today's Menu Section */
+.today-menu-section {
+  margin-bottom: 40px;
+}
+
+.menu-intro {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.menu-intro h2 {
+  font-size: 28px;
+  color: var(--dark-gray);
+  margin-bottom: 12px;
+}
+
+.menu-intro p {
+  color: var(--medium-gray);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.today-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.today-menu-card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.today-menu-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  border-color: var(--primary-orange);
+}
+
+.no-menu-item {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.no-menu-item p {
+  color: var(--medium-gray);
+  margin-bottom: 16px;
+}
+
+.order-btn {
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.order-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Menu Info Section */
+.menu-info-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.menu-info-section .info-card {
+  background: var(--white);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.menu-info-section .info-card h3 {
+  font-size: 18px;
+  color: var(--dark-gray);
+  margin-bottom: 12px;
+}
+
+.menu-info-section .info-card p {
+  color: var(--medium-gray);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-veg {
+  background: #E8F5E9;
+  color: var(--fresh-green);
+}
+
+.tag-nonveg {
+  background: #FFEBEE;
+  color: var(--red);
+}
+
+.tag-jain {
+  background: #FFF8E1;
+  color: #F9A825;
+}
+
+/* Responsive for Today's Menu */
+@media (max-width: 992px) {
+  .today-menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .menu-info-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .today-menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-info-section {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Responsive */
 @media (max-width: 992px) {
   .menu-grid {

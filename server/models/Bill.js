@@ -16,15 +16,37 @@ const billSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  totalTiffins: {
+  // Subscription details
+  subscriptionAmount: {
     type: Number,
     required: true,
+    default: 0,
+    min: 0
+  },
+  subscriptionDays: {
+    type: Number,
+    default: 0
+  },
+  // Extra tiffins
+  extraTiffinsCount: {
+    type: Number,
+    default: 0
+  },
+  extraTiffinsAmount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  // Legacy fields for backward compatibility
+  totalTiffins: {
+    type: Number,
     default: 0
   },
   pricePerTiffin: {
     type: Number,
-    required: true
+    default: 0
   },
+  // Total amount
   totalAmount: {
     type: Number,
     required: true
@@ -55,4 +77,4 @@ const billSchema = new mongoose.Schema({
 // Compound index for unique bill per user per month/year
 billSchema.index({ user: 1, month: 1, year: 1 }, { unique: true });
 
-module.exports = mongoose.model('Bill', billSchema)
+module.exports = mongoose.model('Bill', billSchema);

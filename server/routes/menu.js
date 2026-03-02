@@ -3,6 +3,51 @@ const router = express.Router();
 const Menu = require('../models/Menu');
 const { protect, adminOnly } = require('../middleware/auth');
 
+// Helper function to get day name
+const getDayName = () => {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return days[new Date().getDay()];
+};
+
+// @route   GET /api/menu/today
+// @desc    Get today's menu items only
+// @access  Public
+router.get('/today', async (req, res) => {
+  try {
+    const today = getDayName();
+    
+    // Get menu items for today or 'All' days
+    const menuItems = await Menu.find({
+      isAvailable: true,
+      dayOfWeek: { $in: [today, 'All'] }
+    }).sort({ mealType: 1 });
+
+    // Group by meal type and get one per type
+    const todayMenu = {
+      veg: menuItems.find(item => item.mealType === 'veg') || null,
+      'non-veg': menuItems.find(item => item.mealType === 'non-veg') || null,
+      jain: menuItems.find(item => item.mealType === 'jain') || null,
+      dayName: today,
+      date: new Date().toLocaleDateString('en-IN', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      })
+    };
+
+    res.json({
+      success: true,
+      data: todayMenu
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 // @route   GET /api/menu
 // @desc    Get all menu items
 // @access  Public

@@ -7,33 +7,49 @@ import './Menu.css';
 const Menu = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [menuItems, setMenuItems] = useState([]);
+  const [todayMenu, setTodayMenu] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
-  const [selectedDay, setSelectedDay] = useState('All');
-  const [subscribing, setSubscribing] = useState(null);
+  const [ordering, setOrdering] = useState(null);
   const [showSuccess, setShowSuccess] = useState('');
 
-  const days = ['All', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
   useEffect(() => {
-    const fetchMenu = async () => {
-      try {
-        setLoading(true);
-        let query = {};
-        if (filter !== 'all') query.mealType = filter;
-        if (selectedDay !== 'All') query.day = selectedDay;
+    fetchTodayMenu();
+  }, []);
 
-        const res = await api.get('/menu', { params: query });
-        setMenuItems(res.data.data);
-      } catch (error) {
-        console.error('Error fetching menu:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMenu();
-  }, [filter, selectedDay]);
+  const fetchTodayMenu = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/menu/today');
+      setTodayMenu(res.data.data);
+    } catch (error) {
+      console.error('Error fetching today menu:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOrderExtra = async (mealType, menuItem) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    setOrdering(mealType);
+    try {
+      await api.post('/extra-tiffins/order', {
+        menuId: menuItem?._id,
+        mealType: mealType,
+        price: menuItem?.price || 120
+      });
+      setShowSuccess(`Extra ${mealType} tiffin ordered successfully! It will be added to your monthly bill.`);
+      setTimeout(() => setShowSuccess(''), 4000);
+    } catch (error) {
+      console.error('Order error:', error);
+      alert(error.response?.data?.message || 'Failed to order. Please try again.');
+    } finally {
+      setOrdering(null);
+    }
+  };
 
   const getMealTypeTag = (type) => {
     const classes = {
@@ -49,85 +65,16 @@ const Menu = () => {
     return <span className={`tag ${classes[type]}`}>{labels[type]}</span>;
   };
 
-  const handleSubscribe = async (item) => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-
-    setSubscribing(item._id);
-    try {
-      await api.post('/subscriptions', {
-        planType: 'monthly',
-        mealType: item.mealType,
-        pricePerTiffin: item.price,
-        days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        deliveryTime: 'lunch'
-      });
-      setShowSuccess(`Subscribed to ${item.name}!`);
-      setTimeout(() => setShowSuccess(''), 3000);
-    } catch (error) {
-      console.error('Subscription error:', error);
-      alert('Failed to subscribe. Please try again.');
-    } finally {
-      setSubscribing(null);
-    }
-  };
+  const mealTypes = ['veg', 'non-veg', 'jain'];
 
   return (
     <div className="menu-page">
       <div className="container">
         <div className="page-header">
-          <h1 className="page-title">Our Menu</h1>
+          <h1 className="page-title">Today's Menu</h1>
           <p className="page-subtitle">
-            Fresh homemade meals prepared daily with love and care
+            {todayMenu?.date || 'Loading...'}
           </p>
-        </div>
-
-        {/* Filters */}
-        <div className="menu-filters">
-          <div className="filter-group">
-            <label>Meal Type:</label>
-            <div className="filter-buttons">
-              <button
-                className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
-                onClick={() => setFilter('all')}
-              >
-                All
-              </button>
-              <button
-                className={`filter-btn ${filter === 'veg' ? 'active' : ''}`}
-                onClick={() => setFilter('veg')}
-              >
-                🥬 Veg
-              </button>
-              <button
-                className={`filter-btn ${filter === 'non-veg' ? 'active' : ''}`}
-                onClick={() => setFilter('non-veg')}
-              >
-                🍗 Non-Veg
-              </button>
-              <button
-                className={`filter-btn ${filter === 'jain' ? 'active' : ''}`}
-                onClick={() => setFilter('jain')}
-              >
-                🧅 Jain
-              </button>
-            </div>
-          </div>
-
-          <div className="filter-group">
-            <label>Day:</label>
-            <select 
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
-              className="day-select"
-            >
-              {days.map(day => (
-                <option key={day} value={day}>{day}</option>
-              ))}
-            </select>
-          </div>
         </div>
 
         {/* Success Message */}
@@ -137,55 +84,107 @@ const Menu = () => {
           </div>
         )}
 
-        {/* Menu Grid */}
+        {/* Today's Menu */}
         {loading ? (
           <div className="loader"></div>
         ) : (
-          <div className="menu-grid">
-            {menuItems.length > 0 ? (
-              menuItems.map(item => (
-                <div key={item._id} className="menu-card">
-                  <div className="menu-card-header">
-                    {getMealTypeTag(item.mealType)}
-                    <span className="menu-day">{item.dayOfWeek}</span>
-                  </div>
-                  <h3 className="menu-name">{item.name}</h3>
-                  <p className="menu-description">{item.description}</p>
-                  <div className="menu-items">
-                    <strong>Includes:</strong>
-                    <ul>
-                      {item.items.map((menuItem, idx) => (
-                        <li key={idx}>{menuItem}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  {item.nutritionalInfo && (
-                    <div className="nutritional-info">
-                      <span>🔥 {item.nutritionalInfo.calories} cal</span>
+          <div className="today-menu-section">
+            <div className="menu-intro">
+              <h2>🍽️ Order Extra Tiffin</h2>
+              <p>
+                Don't have a subscription? Or want an extra tiffin today? 
+                Order from today's menu and it will be added to your monthly bill.
+              </p>
+            </div>
+
+            <div className="today-menu-grid">
+              {mealTypes.map(mealType => {
+                const menuItem = todayMenu?.[mealType];
+                return (
+                  <div key={mealType} className="today-menu-card">
+                    <div className="menu-card-header">
+                      {getMealTypeTag(mealType)}
                     </div>
-                  )}
-                  <div className="menu-footer">
-                    <div className="price-info">
-                      <span className="menu-price">₹{item.price}</span>
-                      <span className="per-tiffin">per tiffin</span>
-                    </div>
-                    <button
-                      className="btn btn-primary subscribe-btn"
-                      onClick={() => handleSubscribe(item)}
-                      disabled={subscribing === item._id}
-                    >
-                      {subscribing === item._id ? 'Subscribing...' : 'Subscribe'}
-                    </button>
+                    
+                    {menuItem ? (
+                      <>
+                        <h3 className="menu-name">{menuItem.name}</h3>
+                        <p className="menu-description">{menuItem.description}</p>
+                        
+                        {menuItem.items && menuItem.items.length > 0 && (
+                          <div className="menu-items">
+                            <strong>Today's Items:</strong>
+                            <ul>
+                              {menuItem.items.map((item, idx) => (
+                                <li key={idx}>{item}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {menuItem.nutritionalInfo && (
+                          <div className="nutritional-info">
+                            <span>🔥 {menuItem.nutritionalInfo.calories} cal</span>
+                          </div>
+                        )}
+
+                        <div className="menu-footer">
+                          <div className="price-info">
+                            <span className="menu-price">₹{menuItem.price}</span>
+                            <span className="per-tiffin">per tiffin</span>
+                          </div>
+                          <button
+                            className="btn btn-primary order-btn"
+                            onClick={() => handleOrderExtra(mealType, menuItem)}
+                            disabled={ordering === mealType}
+                          >
+                            {ordering === mealType ? 'Ordering...' : 'Order Extra'}
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="no-menu-item">
+                        <p>No {mealType} menu available for today</p>
+                        <button
+                          className="btn btn-secondary order-btn"
+                          onClick={() => handleOrderExtra(mealType, null)}
+                          disabled={ordering === mealType}
+                        >
+                          {ordering === mealType ? 'Ordering...' : 'Order Default'}
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-menu">
-                <p>No menu items available for the selected filters.</p>
-              </div>
-            )}
+                );
+              })}
+            </div>
           </div>
         )}
+
+        {/* Info Section */}
+        <div className="menu-info-section">
+          <div className="info-card">
+            <h3>📦 How Extra Orders Work</h3>
+            <p>
+              When you order an extra tiffin, it gets added to your monthly bill. 
+              You'll see the total at the end of the month including your subscription + extra orders.
+            </p>
+          </div>
+          <div className="info-card">
+            <h3>⏰ Order Timing</h3>
+            <p>
+              Orders placed before 10 AM will be delivered the same day. 
+              Orders after 10 AM will be delivered the next day.
+            </p>
+          </div>
+          <div className="info-card">
+            <h3>💡 Tip</h3>
+            <p>
+              Have a subscription? Your daily tiffin is already included. 
+              Order extra only when you need an additional tiffin.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

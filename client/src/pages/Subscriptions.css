@@ -3,6 +3,26 @@
   min-height: 80vh;
 }
 
+/* Existing Subscription Notice */
+.existing-subscription-notice {
+  background: #FFF8E1;
+  border: 1px solid #FFD54F;
+  padding: 20px 24px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.existing-subscription-notice p {
+  margin: 0;
+  color: #F57C00;
+}
+
+.existing-subscription-notice a {
+  color: var(--primary-orange);
+  font-weight: 600;
+}
+
 /* Plans Grid */
 .plans-grid {
   display: grid;
@@ -18,6 +38,7 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   position: relative;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
 }
 
 .plan-card:hover {
@@ -42,6 +63,11 @@
   font-weight: 600;
 }
 
+.plan-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
 .plan-name {
   font-size: 24px;
   font-weight: 700;
@@ -56,20 +82,35 @@
 }
 
 /* Pricing */
-.plan-prices {
+.plan-pricing {
   margin-bottom: 24px;
+  padding: 20px;
+  background: var(--light-gray);
+  border-radius: 12px;
 }
 
-.price-option {
+.monthly-price {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #E0E0E0;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 8px;
 }
 
-.price-option:last-child {
-  border-bottom: none;
+.monthly-price .price {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary-orange);
+}
+
+.monthly-price .price-unit {
+  font-size: 16px;
+  color: var(--medium-gray);
+}
+
+.per-tiffin {
+  font-size: 14px;
+  color: var(--medium-gray);
 }
 
 .price {
