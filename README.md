@@ -32,7 +32,6 @@ A full-stack tiffin service application for Mumbai, India. Users can subscribe t
 - **Warm Yellow**: #F7C548 (Accents)
 - **Fresh Green**: #2E7D32 (Veg indicator, success)
 - **Red**: #C62828 (Non-Veg indicator)
-- **NO PURPLE** ❌
 
 ## Project Structure 📁
 
