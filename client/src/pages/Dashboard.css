@@ -20,17 +20,17 @@
 }
 
 .billing-summary-card .amount {
-  color: #FFFFFF !important;
+  color: #000000 !important;
   font-weight: 700 !important;
 }
 
 .billing-summary-card .label {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgb(0, 0, 0) !important;
 }
 
 /* Tags inside billing card - white background for visibility */
 .billing-summary-card .tag {
-  background: white;
+  background: rgba(209, 13, 13, 0.789);
   color: #FF6B35;
   font-weight: 600;
   padding: 4px 12px;

@@ -135,6 +135,16 @@ const AdminDashboard = () => {
     }
   };
 
+  const toggleBillStatus = async (billId, currentStatus) => {
+    try {
+      await api.put(`/bills/${billId}/toggle-status`);
+      fetchAllBills();
+    } catch (error) {
+      console.error('Error toggling bill status:', error);
+      alert('Failed to update bill status');
+    }
+  };
+
   const getMonthName = (month) => {
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 
                     'July', 'August', 'September', 'October', 'November', 'December'];
@@ -546,16 +556,14 @@ const AdminDashboard = () => {
                           <span className="amount">₹{bill.totalAmount}</span>
                         </div>
                       </div>
-                      {bill.status === 'pending' && (
-                        <div className="bill-actions">
-                          <button 
-                            className="btn btn-success btn-sm"
-                            onClick={() => markBillAsPaid(bill._id)}
-                          >
-                            Mark as Paid
-                          </button>
-                        </div>
-                      )}
+                      <div className="bill-actions">
+                        <button 
+                          className={`btn btn-sm ${bill.status === 'paid' ? 'btn-warning' : 'btn-success'}`}
+                          onClick={() => toggleBillStatus(bill._id, bill.status)}
+                        >
+                          {bill.status === 'paid' ? 'Mark as Unpaid' : 'Mark as Paid'}
+                        </button>
+                      </div>
                     </div>
                   ))}
                   {bills.length === 0 && <p className="no-data">No bills generated yet. Click "Generate Bills" to create bills.</p>}

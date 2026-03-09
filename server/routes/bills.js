@@ -455,4 +455,44 @@ router.put('/:id/pay', protect, adminOnly, async (req, res) => {
   }
 });
 
+// @route   PUT /api/bills/:id/toggle-status
+// @desc    Toggle bill payment status (Admin only)
+// @access  Private/Admin
+router.put('/:id/toggle-status', protect, adminOnly, async (req, res) => {
+  try {
+    const bill = await Bill.findById(req.params.id);
+
+    if (!bill) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bill not found'
+      });
+    }
+
+    // Toggle status
+    if (bill.status === 'paid') {
+      bill.status = 'pending';
+      bill.paidAt = null;
+    } else {
+      bill.status = 'paid';
+      bill.paidAt = new Date();
+    }
+
+    await bill.save();
+
+    const updatedBill = await Bill.findById(req.params.id)
+      .populate('user', 'name email phone address');
+
+    res.json({
+      success: true,
+      data: updatedBill
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
 module.exports = router;
