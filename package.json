@@ -1,4 +1,47 @@
 {
+  "name": "tiffin-service",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Tiffin Service Management SaaS Application",
+  "private": true,
+  "scripts": {
+    "start": "npm start --prefix server",
+    "dev": "npm run dev --prefix server",
+    "dev:client": "npm start --prefix client",
+    "build": "npm run build --prefix client",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{js,json,md}\"",
+    "prepare": "husky",
+    "test": "cd server && npm test",
+    "test:client": "cd client && npm test",
+    "docker:build": "docker build -t tiffin-service .",
+    "docker:run": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.5.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.9.6"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "tiffin",
+    "saas",
+    "mern",
+    "subscription",
+    "food-delivery"
+  ],
+  "author": "Tiffin Service Team",
+  "license": "MIT",
   "dependencies": {
     "validator": "^13.15.26"
   }

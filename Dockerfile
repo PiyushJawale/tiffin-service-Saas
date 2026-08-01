@@ -47,5 +47,5 @@ ENV PORT=5000
 # Working directory for server
 WORKDIR /app/server
 
-# Start the application
-CMD ["node", "server.js"]
+# Start the application (using refactored entry point)
+CMD ["node", "src/server.js"]

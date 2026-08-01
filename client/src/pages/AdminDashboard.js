@@ -125,16 +125,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const markBillAsPaid = async (billId) => {
-    try {
-      await api.put(`/bills/${billId}/pay`);
-      fetchAllBills();
-    } catch (error) {
-      console.error('Error marking bill as paid:', error);
-      alert('Failed to mark bill as paid');
-    }
-  };
-
   const toggleBillStatus = async (billId, currentStatus) => {
     try {
       await api.put(`/bills/${billId}/toggle-status`);

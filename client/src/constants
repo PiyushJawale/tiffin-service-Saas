@@ -1,0 +1,62 @@
+/**
+ * Application Constants
+ */
+
+export const APP_CONSTANTS = {
+  // API
+  API_URL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
+
+  // User roles
+  ROLES: {
+    USER: 'user',
+    ADMIN: 'admin',
+  },
+
+  // Subscription status
+  SUBSCRIPTION_STATUS: {
+    ACTIVE: 'active',
+    PAUSED: 'paused',
+    CANCELLED: 'cancelled',
+  },
+
+  // Bill status
+  BILL_STATUS: {
+    PENDING: 'pending',
+    PAID: 'paid',
+    OVERDUE: 'overdue',
+  },
+
+  // Meal types
+  MEAL_TYPES: {
+    VEG: 'veg',
+    NON_VEG: 'non-veg',
+    JAIN: 'jain',
+  },
+
+  // Months
+  MONTHS: [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ],
+
+  // Routes
+  ROUTES: {
+    HOME: '/',
+    MENU: '/menu',
+    SUBSCRIPTIONS: '/subscriptions',
+    LOGIN: '/login',
+    REGISTER: '/register',
+    DASHBOARD: '/dashboard',
+    ADMIN: '/admin',
+    CONTACT: '/contact',
+  },
+
+  // Storage keys
+  STORAGE: {
+    TOKEN: 'token',
+    REFRESH_TOKEN: 'refreshToken',
+    USER: 'user',
+  },
+};
+
+export default APP_CONSTANTS;

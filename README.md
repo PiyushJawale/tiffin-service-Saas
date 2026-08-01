@@ -1,179 +1,294 @@
-"# Mumbai Tiffin Service 🍱
+# Mumbai Tiffin Service - Enterprise SaaS Platform
 
-A full-stack tiffin service application for Mumbai, India. Users can subscribe to daily homemade meals, and admins can track deliveries and generate monthly bills.
+A production-ready MERN stack SaaS application for managing tiffin service subscriptions, deliveries, and billing.
 
-## Features ✨
+## 🏗️ Architecture Overview
 
-### For Users
-- 📋 View daily menu with meal options (Veg, Non-Veg, Jain)
-- 📅 Subscribe to daily, weekly, or monthly plans
-- 📊 Track delivery history
-- 💰 View monthly bills based on actual deliveries
+This application follows enterprise-grade architecture patterns suitable for scaling to thousands of customers, multiple vendors, and future mobile app support.
 
-### For Admins
-- 👥 Manage all users and subscriptions
-- 📦 Track daily tiffin deliveries (mark delivered/not delivered)
-- 💰 Generate monthly bills automatically
-- 📊 Dashboard with key statistics
-
-## Tech Stack 🛠️
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | React.js |
-| Backend | Node.js + Express.js |
-| Database | MongoDB |
-| Authentication | JWT |
-
-## Color Palette 🎨
-
-- **Primary Orange**: #FF6B35 (Buttons, highlights)
-- **Teal**: #00796B (Secondary accent)
-- **Warm Yellow**: #F7C548 (Accents)
-- **Fresh Green**: #2E7D32 (Veg indicator, success)
-- **Red**: #C62828 (Non-Veg indicator)
-
-## Project Structure 📁
+### Backend Architecture (Layered)
 
 ```
-tiffin-service/
-├── server/                 # Backend
-│   ├── models/             # MongoDB models
-│   │   ├── User.js
-│   │   ├── Menu.js
-│   │   ├── Subscription.js
-│   │   ├── DailyDelivery.js
-│   │   └── Bill.js
-│   ├── routes/             # API routes
-│   │   ├── auth.js
-│   │   ├── menu.js
-│   │   ├── subscriptions.js
-│   │   ├── deliveries.js
-│   │   ├── bills.js
-│   │   └── admin.js
-│   ├── middleware/
-│   │   └── auth.js
-│   ├── server.js
-│   ├── package.json
-│   └── .env
-│
-├── client/                 # Frontend (React)
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   ├── services/
-│   │   └── App.js
-│   └── package.json
-│
-└── README.md
+server/
+├── src/
+│   ├── config/           # Environment and app configuration
+│   ├── database/         # MongoDB connection management
+│   ├── modules/          # Feature-based modules
+│   │   ├── auth/         # Authentication module
+│   │   ├── menu/         # Menu management
+│   │   ├── subscriptions/# Subscription handling
+│   │   ├── deliveries/   # Delivery tracking
+│   │   ├── billing/      # Bill generation
+│   │   ├── admin/        # Admin operations
+│   │   └── extraTiffins/ # Extra order handling
+│   ├── models/           # Mongoose data models
+│   ├── middleware/       # Express middleware
+│   ├── utils/            # Utility functions
+│   ├── helpers/          # Helper functions
+│   └── constants/        # Application constants
+├── __tests__/            # Test files
+└── docs/                 # API documentation
 ```
 
-## Setup Instructions 🚀
+Each module contains:
+- **Controller**: HTTP request handling
+- **Service**: Business logic
+- **Repository**: Database operations
+- **Validator**: Input validation
+- **Routes**: API endpoints
+
+### Frontend Architecture (Feature-Based)
+
+```
+client/
+├── src/
+│   ├── api/              # Centralized API layer
+│   ├── components/       # Reusable components
+│   │   ├── common/       # Generic components
+│   │   ├── layout/       # Layout components
+│   │   └── ui/           # UI primitives
+│   ├── features/         # Feature-based modules
+│   │   ├── auth/
+│   │   ├── menu/
+│   │   ├── subscriptions/
+│   │   ├── billing/
+│   │   ├── deliveries/
+│   │   └── admin/
+│   ├── hooks/            # Custom React hooks
+│   ├── context/          # React context providers
+│   ├── utils/            # Utility functions
+│   ├── constants/        # Application constants
+│   └── pages/            # Page components
+```
+
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or MongoDB Atlas)
 
-### 1. Clone and Setup Backend
+- Node.js >= 18.0.0
+- MongoDB >= 6.0
+- npm >= 9.0.0
+
+### Installation
 
 ```bash
-# Navigate to server folder
-cd tiffin-service/server
+# Clone the repository
+git clone https://github.com/PiyushJawale/tiffin-service-Saas.git
+cd tiffin-service
 
-# Install dependencies
-npm install
+# Install all dependencies
+npm run install:all
 
-# Create .env file
-# Edit .env with your MongoDB connection string
-# MONGODB_URI=mongodb://localhost:27017/tiffin-service
-# JWT_SECRET=your-secret-key
-# PORT=5000
+# Set up environment variables
+cp server/.env.example server/.env
+# Edit server/.env with your configuration
 
-# Start the server
+# Start development server
 npm run dev
 ```
 
-### 2. Setup Frontend
+### Environment Variables
+
+Create a `server/.env` file:
+
+```env
+# Server Configuration
+NODE_ENV=development
+PORT=5000
+
+# MongoDB
+MONGODB_URI=mongodb://localhost:27017/tiffin-service
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key
+JWT_REFRESH_SECRET=your-refresh-token-secret
+JWT_EXPIRE=1h
+JWT_REFRESH_EXPIRE=7d
+
+# API Configuration
+API_VERSION=v1
+```
+
+## 📁 Project Structure
+
+### Backend Structure
+
+| Directory | Purpose |
+|-----------|---------|
+| `config/` | Environment configuration, constants |
+| `database/` | MongoDB connection, graceful shutdown |
+| `modules/` | Feature-based architecture (auth, menu, etc.) |
+| `models/` | Mongoose schemas and models |
+| `middleware/` | Auth, error handling, validation, security |
+| `utils/` | Logger, response formatter, API error classes |
+| `helpers/` | Date utilities, business helpers |
+| `constants/` | App-wide constants (roles, status codes) |
+
+### Frontend Structure
+
+| Directory | Purpose |
+|-----------|---------|
+| `api/` | Axios client, API service modules |
+| `components/` | Reusable UI components |
+| `features/` | Feature-based state and components |
+| `hooks/` | Custom React hooks |
+| `context/` | React Context providers |
+| `pages/` | Route-level page components |
+| `utils/` | Frontend utilities |
+| `constants/` | Frontend constants |
+
+## 🔐 Security Features
+
+- **Helmet**: HTTP headers security
+- **CORS**: Cross-origin resource sharing
+- **Rate Limiting**: API request throttling
+- **Mongo Sanitize**: NoSQL injection prevention
+- **XSS Clean**: Cross-site scripting protection
+- **HPP**: HTTP parameter pollution prevention
+- **JWT**: Access and refresh token authentication
+- **Password Hashing**: bcryptjs with salt rounds
+
+## 🧪 Testing
 
 ```bash
-# Navigate to client folder
-cd tiffin-service/client
+# Run server tests
+npm run test
 
-# Install dependencies
-npm install
+# Run client tests
+npm run test:client
 
-# Start React development server
-npm start
+# Run with coverage
+npm run test:coverage
 ```
 
-### 3. Seed Database (Optional)
-
-You can create sample menu items and admin user by running:
+## 🐳 Docker Deployment
 
 ```bash
-cd server
-node seed.js
+# Build Docker image
+npm run docker:build
+
+# Run with Docker Compose
+npm run docker:run
+
+# Stop containers
+npm run docker:down
 ```
 
-## API Endpoints 🔌
+## 📝 Code Quality
 
-### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/auth/register | Register new user |
-| POST | /api/auth/login | Login user |
-| GET | /api/auth/me | Get current user |
+```bash
+# Lint code
+npm run lint
 
-### Menu
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/menu | Get all menu items |
-| GET | /api/menu/:id | Get single menu item |
-| POST | /api/menu | Add menu item (admin) |
+# Fix linting issues
+npm run lint:fix
 
-### Subscriptions
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/subscriptions | Get user subscriptions |
-| POST | /api/subscriptions | Create subscription |
-| PUT | /api/subscriptions/:id | Update subscription |
+# Format code
+npm run format
 
-### Admin
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/admin/users | Get all users |
-| GET | /api/admin/dashboard | Get dashboard stats |
-| GET | /api/admin/monthly-report | Get monthly report |
-
-## How Billing Works 💡
-
-```
-User: Rahul Sharma
-Subscription: Daily Veg Tiffin @ ₹120/tiffin
-
-January 2025:
-- Total days in month: 31
-- Tiffins delivered: 28 (user didn't take 3 days)
-- Final Bill: 28 × ₹120 = ₹3,360
+# Check formatting
+npm run format:check
 ```
 
-Users only pay for the tiffins actually delivered!
+Pre-commit hooks automatically lint and format code via Husky.
 
-## Demo Credentials 👤
+## 🔄 CI/CD Pipeline
 
-- **Admin**: admin@tiffin.com / admin123
-- **User**: user@tiffin.com / user123
+GitHub Actions workflow includes:
+- Lint and format checks
+- Server tests
+- Client build
+- Docker build test
+- Security audit
+- Production deployment (on main branch)
 
-## Future Enhancements 🔮
+## 📚 API Documentation
 
-- [ ] Razorpay payment integration
-- [ ] WhatsApp notifications
-- [ ] Mobile app (React Native)
-- [ ] Real-time delivery tracking
-- [ ] Loyalty program
+API documentation is available via Swagger UI at `/api/docs` when running the server.
+
+### API Versioning
+
+All endpoints are versioned:
+- Current version: `/api/v1/*`
+- Backward compatibility: `/api/*` (maps to v1)
+
+### Key Endpoints
+
+| Module | Endpoint | Description |
+|--------|----------|-------------|
+| Auth | `/api/v1/auth/*` | Registration, login, tokens |
+| Menu | `/api/v1/menu/*` | Menu CRUD operations |
+| Subscriptions | `/api/v1/subscriptions/*` | Subscription management |
+| Deliveries | `/api/v1/deliveries/*` | Delivery tracking |
+| Bills | `/api/v1/bills/*` | Billing operations |
+| Admin | `/api/v1/admin/*` | Admin dashboard |
+
+## 🏛️ Design Principles
+
+- **SOLID**: Single responsibility, open/closed, Liskov substitution, interface segregation, dependency inversion
+- **DRY**: Don't Repeat Yourself - reusable components and utilities
+- **KISS**: Keep It Simple, Stupid - clear, maintainable code
+- **Separation of Concerns**: Clear layer separation
+- **Clean Code**: Meaningful names, small functions, clear intent
+
+## 📈 Scalability
+
+The architecture supports:
+- Horizontal scaling via stateless design
+- Database connection pooling
+- Redis caching (ready for integration)
+- Message queue support (ready for integration)
+- Microservices migration path
+
+## 🔧 Configuration
+
+### Development
+
+```bash
+npm run dev          # Start server with nodemon
+npm run dev:client   # Start React development server
+```
+
+### Production
+
+```bash
+npm run build        # Build React client
+npm start            # Start production server
+```
+
+## 📦 Dependencies
+
+### Backend
+
+- express - Web framework
+- mongoose - MongoDB ODM
+- bcryptjs - Password hashing
+- jsonwebtoken - JWT authentication
+- helmet - Security headers
+- cors - CORS middleware
+- express-rate-limit - Rate limiting
+- express-validator - Input validation
+- swagger-jsdoc - API documentation
+- swagger-ui-express - Swagger UI
+
+### Frontend
+
+- react - UI library
+- react-router-dom - Routing
+- axios - HTTP client
+
+## 🤝 Contributing
+
+1. Create a feature branch from `production-refactor`
+2. Make changes following the established patterns
+3. Ensure tests pass and code is linted
+4. Submit a pull request
+
+## 📄 License
+
+MIT License - See LICENSE file for details.
 
 ---
 
-Made with ❤️ for Mumbai"
+**Version**: 2.0.0  
+**Last Updated**: 2026
