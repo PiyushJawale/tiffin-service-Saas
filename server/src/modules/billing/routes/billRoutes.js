@@ -3,7 +3,10 @@ const router = express.Router();
 const billController = require('../controllers/billController');
 const { protect, adminOnly } = require('../../../middleware/auth');
 const validate = require('../../../middleware/validate');
-const { generateBillValidation, generateAllBillsValidation } = require('../validators/billValidator');
+const {
+  generateBillValidation,
+  generateAllBillsValidation,
+} = require('../validators/billValidator');
 
 /**
  * Bill Routes
@@ -17,8 +20,22 @@ router.get('/:id', protect, billController.getBillById);
 
 // Admin only routes
 router.get('/all', protect, adminOnly, billController.getAllBills);
-router.post('/generate', protect, adminOnly, generateBillValidation, validate, billController.generateBill);
-router.post('/generate-all', protect, adminOnly, generateAllBillsValidation, validate, billController.generateAllBills);
+router.post(
+  '/generate',
+  protect,
+  adminOnly,
+  generateBillValidation,
+  validate,
+  billController.generateBill
+);
+router.post(
+  '/generate-all',
+  protect,
+  adminOnly,
+  generateAllBillsValidation,
+  validate,
+  billController.generateAllBills
+);
 router.put('/:id/pay', protect, adminOnly, billController.markBillAsPaid);
 router.put('/:id/toggle-status', protect, adminOnly, billController.toggleBillStatus);
 

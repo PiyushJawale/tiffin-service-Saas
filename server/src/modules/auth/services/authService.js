@@ -1,6 +1,6 @@
 const authRepository = require('../repositories/authRepository');
 const ApiError = require('../../../utils/ApiError');
-const { generateTokens, verifyRefreshToken, generateAccessToken } = require('../../../utils/token');
+const { generateTokens, verifyRefreshToken } = require('../../../utils/token');
 
 /**
  * Auth Service

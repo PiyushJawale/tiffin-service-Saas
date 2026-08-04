@@ -6,14 +6,14 @@ const Contact = () => {
     name: '',
     email: '',
     phone: '',
-    message: ''
+    message: '',
   });
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -31,9 +31,7 @@ const Contact = () => {
       <div className="container">
         <div className="page-header">
           <h1 className="page-title">Contact Us</h1>
-          <p className="page-subtitle">
-            We'd love to hear from you. Get in touch with us!
-          </p>
+          <p className="page-subtitle">We'd love to hear from you. Get in touch with us!</p>
         </div>
 
         <div className="contact-grid">

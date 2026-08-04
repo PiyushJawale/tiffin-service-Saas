@@ -10,9 +10,9 @@ const { protect, adminOnly } = require('../middleware/auth');
 router.get('/my-deliveries', protect, async (req, res) => {
   try {
     const { month, year } = req.query;
-    
+
     let query = { user: req.user._id };
-    
+
     if (month && year) {
       const startDate = new Date(year, month - 1, 1);
       const endDate = new Date(year, month, 0);
@@ -26,12 +26,12 @@ router.get('/my-deliveries', protect, async (req, res) => {
     res.json({
       success: true,
       count: deliveries.length,
-      data: deliveries
+      data: deliveries,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -46,7 +46,7 @@ router.get('/date/:date', protect, adminOnly, async (req, res) => {
     nextDate.setDate(nextDate.getDate() + 1);
 
     const deliveries = await DailyDelivery.find({
-      date: { $gte: date, $lt: nextDate }
+      date: { $gte: date, $lt: nextDate },
     })
       .populate('user', 'name email phone address')
       .populate('subscription', 'mealType pricePerTiffin planType')
@@ -55,12 +55,12 @@ router.get('/date/:date', protect, adminOnly, async (req, res) => {
     res.json({
       success: true,
       count: deliveries.length,
-      data: deliveries
+      data: deliveries,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -78,7 +78,7 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
         delivered,
         deliveredAt: delivered ? new Date() : null,
         notes,
-        markedBy: req.user._id
+        markedBy: req.user._id,
       },
       { new: true }
     ).populate('user', 'name email phone');
@@ -86,18 +86,18 @@ router.put('/:id', protect, adminOnly, async (req, res) => {
     if (!delivery) {
       return res.status(404).json({
         success: false,
-        message: 'Delivery record not found'
+        message: 'Delivery record not found',
       });
     }
 
     res.json({
       success: true,
-      data: delivery
+      data: delivery,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -112,9 +112,9 @@ router.post('/create-daily', protect, adminOnly, async (req, res) => {
     const dayName = deliveryDate.toLocaleDateString('en-US', { weekday: 'long' });
 
     // Get all active subscriptions
-    const subscriptions = await Subscription.find({ 
+    const subscriptions = await Subscription.find({
       status: 'active',
-      days: dayName 
+      days: dayName,
     });
 
     const deliveryRecords = [];
@@ -125,8 +125,8 @@ router.post('/create-daily', protect, adminOnly, async (req, res) => {
         user: sub.user,
         date: {
           $gte: new Date(deliveryDate.setHours(0, 0, 0, 0)),
-          $lt: new Date(deliveryDate.setHours(23, 59, 59, 999))
-        }
+          $lt: new Date(deliveryDate.setHours(23, 59, 59, 999)),
+        },
       });
 
       if (!existingDelivery) {
@@ -134,7 +134,7 @@ router.post('/create-daily', protect, adminOnly, async (req, res) => {
           user: sub.user,
           subscription: sub._id,
           date: deliveryDate,
-          delivered: false
+          delivered: false,
         });
       }
     }
@@ -146,12 +146,12 @@ router.post('/create-daily', protect, adminOnly, async (req, res) => {
     res.json({
       success: true,
       message: `Created ${deliveryRecords.length} delivery records`,
-      count: deliveryRecords.length
+      count: deliveryRecords.length,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

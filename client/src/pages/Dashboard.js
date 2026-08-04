@@ -20,9 +20,9 @@ const Dashboard = () => {
       const [subRes, summaryRes, billsRes] = await Promise.all([
         api.get('/subscriptions'),
         api.get('/bills/current-summary'),
-        api.get('/bills/my-bills')
+        api.get('/bills/my-bills'),
       ]);
-      
+
       setSubscription(subRes.data.data[0] || null);
       setBillingSummary(summaryRes.data.data);
       setBills(billsRes.data.data);
@@ -62,7 +62,7 @@ const Dashboard = () => {
   const handleCancelSubscription = async () => {
     if (!subscription) return;
     if (!window.confirm('Are you sure you want to cancel your subscription?')) return;
-    
+
     setActionLoading(true);
     try {
       await api.delete(`/subscriptions/${subscription._id}`);
@@ -80,7 +80,7 @@ const Dashboard = () => {
       paused: 'badge-warning',
       cancelled: 'badge-danger',
       pending: 'badge-warning',
-      paid: 'badge-success'
+      paid: 'badge-success',
     };
     return <span className={`badge ${statusClasses[status]}`}>{status}</span>;
   };
@@ -98,54 +98,65 @@ const Dashboard = () => {
         </div>
 
         {/* Billing Summary Card */}
-        {billingSummary && (billingSummary.subscription || billingSummary.extraTiffinsCount > 0) && (
-          <div className="billing-summary-card">
-            <div className="billing-header">
-              <h2>💰 Current Month Bill</h2>
-              <span className="month-label">{billingSummary.monthName} {billingSummary.year}</span>
-            </div>
-            
-            <div className="billing-breakdown">
-              {billingSummary.subscription ? (
+        {billingSummary &&
+          (billingSummary.subscription || billingSummary.extraTiffinsCount > 0) && (
+            <div className="billing-summary-card">
+              <div className="billing-header">
+                <h2>💰 Current Month Bill</h2>
+                <span className="month-label">
+                  {billingSummary.monthName} {billingSummary.year}
+                </span>
+              </div>
+
+              <div className="billing-breakdown">
+                {billingSummary.subscription ? (
+                  <div className="billing-row">
+                    <div className="billing-item">
+                      <span className="label">
+                        Monthly Subscription ({billingSummary.subscription.mealType})
+                      </span>
+                      <span className="amount">₹{billingSummary.subscriptionAmount}</span>
+                    </div>
+                    <span className={`tag tag-${billingSummary.subscription.mealType}`}>
+                      {billingSummary.subscription.mealType}
+                    </span>
+                  </div>
+                ) : null}
+
                 <div className="billing-row">
                   <div className="billing-item">
-                    <span className="label">Monthly Subscription ({billingSummary.subscription.mealType})</span>
-                    <span className="amount">₹{billingSummary.subscriptionAmount}</span>
+                    <span className="label">
+                      Extra Tiffins ({billingSummary.extraTiffinsCount})
+                    </span>
+                    <span className="amount">₹{billingSummary.extraTiffinsAmount}</span>
                   </div>
-                  <span className={`tag tag-${billingSummary.subscription.mealType}`}>
-                    {billingSummary.subscription.mealType}
-                  </span>
                 </div>
-              ) : null}
-              
-              <div className="billing-row">
-                <div className="billing-item">
-                  <span className="label">Extra Tiffins ({billingSummary.extraTiffinsCount})</span>
-                  <span className="amount">₹{billingSummary.extraTiffinsAmount}</span>
-                </div>
-              </div>
-              
-              <div className="billing-total">
-                <div className="total-item">
-                  <span className="label">Total Payable</span>
-                  <span className="amount">₹{billingSummary.totalAmount}</span>
-                </div>
-              </div>
-            </div>
 
-            {billingSummary.extraTiffinsCount > 0 && (
-              <div className="extra-orders-note">
-                <small>💡 {billingSummary.extraTiffinsCount} extra tiffin(s) ordered this month</small>
+                <div className="billing-total">
+                  <div className="total-item">
+                    <span className="label">Total Payable</span>
+                    <span className="amount">₹{billingSummary.totalAmount}</span>
+                  </div>
+                </div>
               </div>
-            )}
-            
-            {!billingSummary.subscription && billingSummary.extraTiffinsCount > 0 && (
-              <div className="extra-orders-note">
-                <small>⚠️ You don't have an active subscription. Subscribe to get daily tiffins!</small>
-              </div>
-            )}
-          </div>
-        )}
+
+              {billingSummary.extraTiffinsCount > 0 && (
+                <div className="extra-orders-note">
+                  <small>
+                    💡 {billingSummary.extraTiffinsCount} extra tiffin(s) ordered this month
+                  </small>
+                </div>
+              )}
+
+              {!billingSummary.subscription && billingSummary.extraTiffinsCount > 0 && (
+                <div className="extra-orders-note">
+                  <small>
+                    ⚠️ You don't have an active subscription. Subscribe to get daily tiffins!
+                  </small>
+                </div>
+              )}
+            </div>
+          )}
 
         {/* Stats Cards */}
         <div className="stats-grid">
@@ -155,7 +166,9 @@ const Dashboard = () => {
               <h3>Subscription</h3>
               <p>{subscription ? subscription.mealType.toUpperCase() : 'No active subscription'}</p>
               {subscription && (
-                <small className={`status-text ${subscription.status}`}>{subscription.status}</small>
+                <small className={`status-text ${subscription.status}`}>
+                  {subscription.status}
+                </small>
               )}
             </div>
           </div>
@@ -163,14 +176,20 @@ const Dashboard = () => {
             <span className="stat-icon">💰</span>
             <div className="stat-info">
               <h3>Monthly Price</h3>
-              <p>{subscription && subscription.monthlyPrice ? `₹${subscription.monthlyPrice}` : '-'}</p>
+              <p>
+                {subscription && subscription.monthlyPrice ? `₹${subscription.monthlyPrice}` : '-'}
+              </p>
             </div>
           </div>
           <div className="stat-card">
             <span className="stat-icon">📅</span>
             <div className="stat-info">
               <h3>Price per Tiffin</h3>
-              <p>{subscription && subscription.pricePerTiffin ? `₹${subscription.pricePerTiffin}` : '-'}</p>
+              <p>
+                {subscription && subscription.pricePerTiffin
+                  ? `₹${subscription.pricePerTiffin}`
+                  : '-'}
+              </p>
             </div>
           </div>
         </div>
@@ -183,11 +202,16 @@ const Dashboard = () => {
               <div className="subscription-info">
                 <div className="info-item">
                   <label>Meal Type</label>
-                  <span className={`tag tag-${subscription.mealType}`}>{subscription.mealType}</span>
+                  <span className={`tag tag-${subscription.mealType}`}>
+                    {subscription.mealType}
+                  </span>
                 </div>
                 <div className="info-item">
                   <label>Monthly Price</label>
-                  <span className="price">₹{subscription.monthlyPrice || billingSummary?.subscription?.monthlyPrice || '-'}</span>
+                  <span className="price">
+                    ₹
+                    {subscription.monthlyPrice || billingSummary?.subscription?.monthlyPrice || '-'}
+                  </span>
                 </div>
                 <div className="info-item">
                   <label>Price per Tiffin</label>
@@ -209,15 +233,15 @@ const Dashboard = () => {
               <div className="subscription-actions">
                 {subscription.status === 'active' && (
                   <>
-                    <button 
-                      className="btn btn-warning" 
+                    <button
+                      className="btn btn-warning"
                       onClick={handlePauseSubscription}
                       disabled={actionLoading}
                     >
                       {actionLoading ? 'Pausing...' : 'Pause Subscription'}
                     </button>
-                    <button 
-                      className="btn btn-danger" 
+                    <button
+                      className="btn btn-danger"
                       onClick={handleCancelSubscription}
                       disabled={actionLoading}
                     >
@@ -227,15 +251,15 @@ const Dashboard = () => {
                 )}
                 {subscription.status === 'paused' && (
                   <>
-                    <button 
-                      className="btn btn-primary" 
+                    <button
+                      className="btn btn-primary"
                       onClick={handleResumeSubscription}
                       disabled={actionLoading}
                     >
                       {actionLoading ? 'Resuming...' : 'Resume Subscription'}
                     </button>
-                    <button 
-                      className="btn btn-danger" 
+                    <button
+                      className="btn btn-danger"
                       onClick={handleCancelSubscription}
                       disabled={actionLoading}
                     >
@@ -248,7 +272,9 @@ const Dashboard = () => {
           ) : (
             <div className="no-subscription">
               <p>You don't have an active subscription</p>
-              <a href="/subscriptions" className="btn btn-primary">Subscribe Now</a>
+              <a href="/subscriptions" className="btn btn-primary">
+                Subscribe Now
+              </a>
             </div>
           )}
         </div>
@@ -262,9 +288,7 @@ const Dashboard = () => {
                 <div key={idx} className="extra-order-item">
                   <div className="order-info">
                     <span className={`tag tag-${order.mealType}`}>{order.mealType}</span>
-                    <span className="order-date">
-                      {new Date(order.date).toLocaleDateString()}
-                    </span>
+                    <span className="order-date">{new Date(order.date).toLocaleDateString()}</span>
                   </div>
                   <span className="order-price">₹{order.price}</span>
                 </div>
@@ -278,16 +302,20 @@ const Dashboard = () => {
           <h2>Bills History</h2>
           <div className="bills-grid">
             {bills.length > 0 ? (
-              bills.map(bill => (
+              bills.map((bill) => (
                 <div key={bill._id} className="bill-card">
                   <div className="bill-header">
-                    <h4>{getMonthName(bill.month)} {bill.year}</h4>
+                    <h4>
+                      {getMonthName(bill.month)} {bill.year}
+                    </h4>
                     {getStatusBadge(bill.status)}
                   </div>
                   <div className="bill-details">
                     <div className="bill-row">
                       <span>Subscription</span>
-                      <strong>₹{bill.subscriptionAmount || bill.totalTiffins * bill.pricePerTiffin}</strong>
+                      <strong>
+                        ₹{bill.subscriptionAmount || bill.totalTiffins * bill.pricePerTiffin}
+                      </strong>
                     </div>
                     {bill.extraTiffinsCount > 0 && (
                       <div className="bill-row">
@@ -315,8 +343,20 @@ const Dashboard = () => {
 };
 
 const getMonthName = (month) => {
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                  'July', 'August', 'September', 'October', 'November', 'December'];
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
   return months[month - 1];
 };
 

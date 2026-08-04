@@ -11,7 +11,13 @@ const { orderExtraTiffinValidation } = require('../validators/extraTiffinValidat
  */
 
 // Protected routes
-router.post('/order', protect, orderExtraTiffinValidation, validate, extraTiffinController.orderExtraTiffin);
+router.post(
+  '/order',
+  protect,
+  orderExtraTiffinValidation,
+  validate,
+  extraTiffinController.orderExtraTiffin
+);
 router.get('/my-orders', protect, extraTiffinController.getMyOrders);
 router.get('/current-month', protect, extraTiffinController.getCurrentMonthOrders);
 router.put('/:id/deliver', protect, extraTiffinController.markAsDelivered);

@@ -1,3 +1,4 @@
+/* eslint-disable no-process-exit */
 const app = require('./app');
 const { env, validateEnv } = require('./config/env');
 const databaseManager = require('./database/connection');

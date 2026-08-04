@@ -1,22 +1,27 @@
-noconst mongoose = require('mongoose');
+/* eslint-disable no-console, no-process-exit */
+const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost:27017/tiffin-service')
+mongoose
+  .connect('mongodb://localhost:27017/tiffin-service')
   .then(() => {
     console.log('Connected to MongoDB');
-    
+
     const subSchema = new mongoose.Schema({
       user: Object,
       mealType: String,
       pricePerTiffin: Number,
       monthlyPrice: Number,
-      status: String
+      status: String,
     });
-    
+
     const Subscription = mongoose.model('Subscription', subSchema);
-    
-    return Subscription.find({ status: { $in: ['active', 'paused'] } }).populate('user', 'name email');
+
+    return Subscription.find({ status: { $in: ['active', 'paused'] } }).populate(
+      'user',
+      'name email'
+    );
   })
-  .then(subs => {
+  .then((subs) => {
     console.log('\n=== Active Subscriptions ===\n');
     if (subs.length === 0) {
       console.log('No active subscriptions found!');
@@ -33,7 +38,7 @@ mongoose.connect('mongodb://localhost:27017/tiffin-service')
     }
     process.exit(0);
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('Error:', err.message);
     process.exit(1);
   });

@@ -11,7 +11,6 @@ const {
   hppMiddleware,
 } = require('./middleware/security');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
-const logger = require('./utils/logger');
 
 // Route imports
 const authRoutes = require('./modules/auth/routes/authRoutes');

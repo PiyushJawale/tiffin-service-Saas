@@ -17,7 +17,14 @@ router.get('/:id', menuController.getMenuById);
 
 // Admin only routes
 router.post('/', protect, adminOnly, createMenuValidation, validate, menuController.createMenuItem);
-router.put('/:id', protect, adminOnly, updateMenuValidation, validate, menuController.updateMenuItem);
+router.put(
+  '/:id',
+  protect,
+  adminOnly,
+  updateMenuValidation,
+  validate,
+  menuController.updateMenuItem
+);
 router.delete('/:id', protect, adminOnly, menuController.deleteMenuItem);
 
 module.exports = router;

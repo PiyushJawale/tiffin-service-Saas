@@ -42,10 +42,7 @@ const updateSubscriptionValidation = [
     .isLength({ max: 500 })
     .withMessage('Special instructions cannot exceed 500 characters'),
 
-  body('status')
-    .optional()
-    .isIn(['active', 'paused', 'cancelled'])
-    .withMessage('Invalid status'),
+  body('status').optional().isIn(['active', 'paused', 'cancelled']).withMessage('Invalid status'),
 ];
 
 module.exports = {

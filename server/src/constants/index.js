@@ -38,15 +38,7 @@ const CONSTANTS = {
   },
 
   // Days of week
-  DAYS_OF_WEEK: [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ],
+  DAYS_OF_WEEK: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 
   // Months
   MONTHS: [

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { env } = require('../config/env');
 
 /**

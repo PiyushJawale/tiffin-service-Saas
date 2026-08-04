@@ -12,10 +12,7 @@ class BillRepository {
    * @returns {Promise<Array>}
    */
   async findAll(sort = { year: -1, month: -1 }) {
-    return Bill.find()
-      .populate('user', 'name email phone address')
-      .sort(sort)
-      .exec();
+    return Bill.find().populate('user', 'name email phone address').sort(sort).exec();
   }
 
   /**
@@ -53,9 +50,7 @@ class BillRepository {
    * @returns {Promise<Array>}
    */
   async findPendingBills() {
-    return Bill.find({ status: 'pending' })
-      .populate('user', 'name email phone')
-      .exec();
+    return Bill.find({ status: 'pending' }).populate('user', 'name email phone').exec();
   }
 
   /**

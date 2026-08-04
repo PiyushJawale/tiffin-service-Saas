@@ -21,20 +21,25 @@ const Navbar = () => {
           <span className="logo-text">Mumbai Tiffin</span>
         </Link>
 
-        <button 
-          className="mobile-menu-btn"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
+        <button className="mobile-menu-btn" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           <span></span>
           <span></span>
           <span></span>
         </button>
 
         <div className={`navbar-menu ${mobileMenuOpen ? 'active' : ''}`}>
-          <Link to="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-          <Link to="/menu" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Menu</Link>
-          <Link to="/subscriptions" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Subscriptions</Link>
-          <Link to="/contact" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Contact</Link>
+          <Link to="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+            Home
+          </Link>
+          <Link to="/menu" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+            Menu
+          </Link>
+          <Link to="/subscriptions" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+            Subscriptions
+          </Link>
+          <Link to="/contact" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+            Contact
+          </Link>
 
           {user ? (
             <>
@@ -42,7 +47,11 @@ const Navbar = () => {
                 Dashboard
               </Link>
               {isAdmin() && (
-                <Link to="/admin" className="nav-link admin-link" onClick={() => setMobileMenuOpen(false)}>
+                <Link
+                  to="/admin"
+                  className="nav-link admin-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
                   Admin Panel
                 </Link>
               )}
@@ -52,8 +61,14 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-              <Link to="/register" className="btn btn-primary nav-btn" onClick={() => setMobileMenuOpen(false)}>
+              <Link to="/login" className="nav-link" onClick={() => setMobileMenuOpen(false)}>
+                Login
+              </Link>
+              <Link
+                to="/register"
+                className="btn btn-primary nav-btn"
+                onClick={() => setMobileMenuOpen(false)}
+              >
                 Sign Up
               </Link>
             </>

@@ -7,23 +7,23 @@ const Home = () => {
     {
       icon: '🏠',
       title: 'Homemade Food',
-      description: 'Fresh, home-cooked meals prepared with love and care daily'
+      description: 'Fresh, home-cooked meals prepared with love and care daily',
     },
     {
       icon: '📅',
       title: 'Flexible Plans',
-      description: 'Choose daily, weekly, or monthly subscription as per your need'
+      description: 'Choose daily, weekly, or monthly subscription as per your need',
     },
     {
       icon: '🚚',
       title: 'Daily Delivery',
-      description: 'Hot and fresh meals delivered to your doorstep every day'
+      description: 'Hot and fresh meals delivered to your doorstep every day',
     },
     {
       icon: '💰',
       title: 'Affordable Prices',
-      description: 'Quality meals at pocket-friendly prices starting from ₹100/day'
-    }
+      description: 'Quality meals at pocket-friendly prices starting from ₹100/day',
+    },
   ];
 
   const testimonials = [
@@ -31,20 +31,20 @@ const Home = () => {
       name: 'Priya Sharma',
       location: 'Andheri',
       text: 'The best tiffin service in Mumbai! Food tastes just like home.',
-      rating: 5
+      rating: 5,
     },
     {
       name: 'Rahul Mehta',
       location: 'Bandra',
       text: 'Been using for 6 months. Consistent quality and timely delivery.',
-      rating: 5
+      rating: 5,
     },
     {
       name: 'Anjali Patel',
       location: 'Dadar',
       text: 'Love the variety in menu. Jain food option is a plus!',
-      rating: 4
-    }
+      rating: 4,
+    },
   ];
 
   return (
@@ -57,8 +57,8 @@ const Home = () => {
             <span className="highlight">Delivered Daily</span>
           </h1>
           <p className="hero-subtitle">
-            Experience the taste of home-cooked food, delivered fresh to your doorstep in Mumbai. 
-            No more worrying about daily cooking!
+            Experience the taste of home-cooked food, delivered fresh to your doorstep in Mumbai. No
+            more worrying about daily cooking!
           </p>
           <div className="hero-buttons">
             <Link to="/menu" className="btn btn-primary btn-large">
@@ -153,9 +153,7 @@ const Home = () => {
           <div className="testimonials-grid">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="testimonial-card">
-                <div className="testimonial-rating">
-                  {'⭐'.repeat(testimonial.rating)}
-                </div>
+                <div className="testimonial-rating">{'⭐'.repeat(testimonial.rating)}</div>
                 <p className="testimonial-text">"{testimonial.text}"</p>
                 <div className="testimonial-author">
                   <strong>{testimonial.name}</strong>

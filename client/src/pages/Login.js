@@ -6,7 +6,7 @@ import './Auth.css';
 const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
-    password: ''
+    password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const Login = () => {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -77,25 +77,24 @@ const Login = () => {
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary auth-btn"
-            disabled={loading}
-          >
+          <button type="submit" className="btn btn-primary auth-btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Don't have an account?{' '}
-            <Link to="/register">Sign Up</Link>
+            Don't have an account? <Link to="/register">Sign Up</Link>
           </p>
         </div>
 
         <div className="demo-credentials">
-          <p><strong>Demo Admin:</strong> admin@tiffin.com / admin123</p>
-          <p><strong>Demo User:</strong> user@tiffin.com / user123</p>
+          <p>
+            <strong>Demo Admin:</strong> admin@tiffin.com / admin123
+          </p>
+          <p>
+            <strong>Demo User:</strong> user@tiffin.com / user123
+          </p>
         </div>
       </div>
     </div>

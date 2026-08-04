@@ -55,7 +55,10 @@ api.interceptors.response.use(
     // Handle 401 errors
     if (error.response?.status === 401 && !originalRequest._retry) {
       // If refresh token endpoint fails, logout
-      if (originalRequest.url.includes('/auth/refresh-token') || originalRequest.url.includes('/auth/login')) {
+      if (
+        originalRequest.url.includes('/auth/refresh-token') ||
+        originalRequest.url.includes('/auth/login')
+      ) {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         window.location.href = '/login';

@@ -12,7 +12,11 @@ const orderExtraTiffinValidation = [
     .isIn(['veg', 'non-veg', 'jain'])
     .withMessage('Invalid meal type. Choose from: veg, non-veg, jain'),
   body('price').optional().isFloat({ min: 0 }).withMessage('Price must be a positive number'),
-  body('notes').optional().trim().isLength({ max: 500 }).withMessage('Notes cannot exceed 500 characters'),
+  body('notes')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Notes cannot exceed 500 characters'),
 ];
 
 module.exports = {

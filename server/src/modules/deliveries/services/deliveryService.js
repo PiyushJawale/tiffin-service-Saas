@@ -1,7 +1,7 @@
 const deliveryRepository = require('../repositories/deliveryRepository');
 const subscriptionRepository = require('../../subscriptions/repositories/subscriptionRepository');
 const ApiError = require('../../../utils/ApiError');
-const { getMonthDateRange, getDayRange, getDayName } = require('../../../helpers/dateHelper');
+const { getMonthDateRange, getDayRange } = require('../../../helpers/dateHelper');
 
 /**
  * Delivery Service
@@ -78,7 +78,6 @@ class DeliveryService {
    */
   async createDailyDeliveries(dateString) {
     const deliveryDate = new Date(dateString);
-    const dayName = deliveryDate.toLocaleDateString('en-US', { weekday: 'long' });
 
     // Get all active subscriptions
     const subscriptions = await subscriptionRepository.findAllActive();

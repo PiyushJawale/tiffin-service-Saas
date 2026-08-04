@@ -18,7 +18,7 @@ router.post('/users', protect, adminOnly, async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists with this email'
+        message: 'User already exists with this email',
       });
     }
 
@@ -29,18 +29,18 @@ router.post('/users', protect, adminOnly, async (req, res) => {
       phone,
       password,
       address,
-      role: role || 'user'
+      role: role || 'user',
     });
 
     res.status(201).json({
       success: true,
       data: user,
-      message: `${role === 'admin' ? 'Admin' : 'User'} created successfully`
+      message: `${role === 'admin' ? 'Admin' : 'User'} created successfully`,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -50,20 +50,18 @@ router.post('/users', protect, adminOnly, async (req, res) => {
 // @access  Private/Admin
 router.get('/users', protect, adminOnly, async (req, res) => {
   try {
-    const users = await User.find({ role: 'user' })
-      .select('-password')
-      .sort({ createdAt: -1 });
+    const users = await User.find({ role: 'user' }).select('-password').sort({ createdAt: -1 });
 
     // Get subscription info for each user
     const usersWithSubscriptions = await Promise.all(
       users.map(async (user) => {
-        const subscription = await Subscription.findOne({ 
-          user: user._id, 
-          status: 'active' 
+        const subscription = await Subscription.findOne({
+          user: user._id,
+          status: 'active',
         });
         return {
           ...user.toObject(),
-          subscription
+          subscription,
         };
       })
     );
@@ -71,12 +69,12 @@ router.get('/users', protect, adminOnly, async (req, res) => {
     res.json({
       success: true,
       count: usersWithSubscriptions.length,
-      data: usersWithSubscriptions
+      data: usersWithSubscriptions,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -91,28 +89,26 @@ router.get('/user/:id', protect, adminOnly, async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
-    const subscription = await Subscription.find({ user: user._id })
-      .sort({ createdAt: -1 });
+    const subscription = await Subscription.find({ user: user._id }).sort({ createdAt: -1 });
 
-    const bills = await Bill.find({ user: user._id })
-      .sort({ year: -1, month: -1 });
+    const bills = await Bill.find({ user: user._id }).sort({ year: -1, month: -1 });
 
     res.json({
       success: true,
       data: {
         user,
         subscriptions: subscription,
-        bills
-      }
+        bills,
+      },
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -124,7 +120,7 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
   try {
     const totalUsers = await User.countDocuments({ role: 'user' });
     const activeSubscriptions = await Subscription.countDocuments({ status: 'active' });
-    
+
     // Get today's deliveries
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -132,15 +128,17 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const todayDeliveries = await DailyDelivery.find({
-      date: { $gte: today, $lt: tomorrow }
+      date: { $gte: today, $lt: tomorrow },
     }).populate('user', 'name phone');
 
-    const deliveredCount = todayDeliveries.filter(d => d.delivered).length;
+    const deliveredCount = todayDeliveries.filter((d) => d.delivered).length;
     const pendingCount = todayDeliveries.length - deliveredCount;
 
     // Get pending bills
-    const pendingBills = await Bill.find({ status: 'pending' })
-      .populate('user', 'name email phone');
+    const pendingBills = await Bill.find({ status: 'pending' }).populate(
+      'user',
+      'name email phone'
+    );
     const totalPendingAmount = pendingBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
 
     res.json({
@@ -152,13 +150,13 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
         todayDelivered: deliveredCount,
         todayPending: pendingCount,
         pendingBillsCount: pendingBills.length,
-        totalPendingAmount
-      }
+        totalPendingAmount,
+      },
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -169,12 +167,12 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
 router.get('/monthly-report', protect, adminOnly, async (req, res) => {
   try {
     const { month, year } = req.query;
-    
+
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
 
     const deliveries = await DailyDelivery.find({
-      date: { $gte: startDate, $lte: endDate }
+      date: { $gte: startDate, $lte: endDate },
     })
       .populate('user', 'name email phone address')
       .populate('subscription', 'mealType pricePerTiffin')
@@ -182,14 +180,14 @@ router.get('/monthly-report', protect, adminOnly, async (req, res) => {
 
     // Group by user
     const userReport = {};
-    deliveries.forEach(delivery => {
+    deliveries.forEach((delivery) => {
       const userId = delivery.user._id.toString();
       if (!userReport[userId]) {
         userReport[userId] = {
           user: delivery.user,
           subscription: delivery.subscription,
           totalDays: 0,
-          deliveredDays: 0
+          deliveredDays: 0,
         };
       }
       userReport[userId].totalDays++;
@@ -198,19 +196,19 @@ router.get('/monthly-report', protect, adminOnly, async (req, res) => {
       }
     });
 
-    const report = Object.values(userReport).map(item => ({
+    const report = Object.values(userReport).map((item) => ({
       ...item,
-      billAmount: item.deliveredDays * (item.subscription?.pricePerTiffin || 0)
+      billAmount: item.deliveredDays * (item.subscription?.pricePerTiffin || 0),
     }));
 
     res.json({
       success: true,
-      data: report
+      data: report,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

@@ -17,7 +17,7 @@ router.post('/order', protect, async (req, res) => {
       if (!menuItem) {
         return res.status(404).json({
           success: false,
-          message: 'Menu item not found'
+          message: 'Menu item not found',
         });
       }
     }
@@ -30,18 +30,18 @@ router.post('/order', protect, async (req, res) => {
       date: new Date(),
       delivered: false,
       addedToBill: false,
-      notes
+      notes,
     });
 
     res.status(201).json({
       success: true,
       message: 'Extra tiffin ordered successfully',
-      data: order
+      data: order,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -78,12 +78,12 @@ router.get('/my-orders', protect, async (req, res) => {
       success: true,
       count: orders.length,
       totalAmount,
-      data: orders
+      data: orders,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -103,7 +103,7 @@ router.get('/current-month', protect, async (req, res) => {
     const orders = await ExtraTiffinOrder.find({
       user: req.user._id,
       date: { $gte: startDate, $lte: endDate },
-      addedToBill: false
+      addedToBill: false,
     }).populate('menu', 'name mealType price');
 
     const totalAmount = orders.reduce((sum, order) => sum + order.price, 0);
@@ -112,12 +112,12 @@ router.get('/current-month', protect, async (req, res) => {
       success: true,
       count: orders.length,
       totalAmount,
-      data: orders
+      data: orders,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -132,7 +132,7 @@ router.put('/:id/deliver', protect, async (req, res) => {
     if (!order) {
       return res.status(404).json({
         success: false,
-        message: 'Order not found'
+        message: 'Order not found',
       });
     }
 
@@ -140,7 +140,7 @@ router.put('/:id/deliver', protect, async (req, res) => {
     if (order.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized'
+        message: 'Not authorized',
       });
     }
 
@@ -150,12 +150,12 @@ router.put('/:id/deliver', protect, async (req, res) => {
     res.json({
       success: true,
       message: 'Order marked as delivered',
-      data: order
+      data: order,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -168,7 +168,7 @@ router.get('/all', protect, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: 'Admin access required'
+        message: 'Admin access required',
       });
     }
 
@@ -181,7 +181,7 @@ router.get('/all', protect, async (req, res) => {
       const targetDate = new Date(date);
       query.date = {
         $gte: new Date(targetDate.setHours(0, 0, 0, 0)),
-        $lte: new Date(targetDate.setHours(23, 59, 59, 999))
+        $lte: new Date(targetDate.setHours(23, 59, 59, 999)),
       };
     }
     // Filter by month/year
@@ -199,12 +199,12 @@ router.get('/all', protect, async (req, res) => {
     res.json({
       success: true,
       count: orders.length,
-      data: orders
+      data: orders,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

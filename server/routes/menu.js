@@ -15,35 +15,35 @@ const getDayName = () => {
 router.get('/today', async (req, res) => {
   try {
     const today = getDayName();
-    
+
     // Get menu items for today or 'All' days
     const menuItems = await Menu.find({
       isAvailable: true,
-      dayOfWeek: { $in: [today, 'All'] }
+      dayOfWeek: { $in: [today, 'All'] },
     }).sort({ mealType: 1 });
 
     // Group by meal type and get one per type
     const todayMenu = {
-      veg: menuItems.find(item => item.mealType === 'veg') || null,
-      'non-veg': menuItems.find(item => item.mealType === 'non-veg') || null,
-      jain: menuItems.find(item => item.mealType === 'jain') || null,
+      veg: menuItems.find((item) => item.mealType === 'veg') || null,
+      'non-veg': menuItems.find((item) => item.mealType === 'non-veg') || null,
+      jain: menuItems.find((item) => item.mealType === 'jain') || null,
       dayName: today,
-      date: new Date().toLocaleDateString('en-IN', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      })
+      date: new Date().toLocaleDateString('en-IN', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
     };
 
     res.json({
       success: true,
-      data: todayMenu
+      data: todayMenu,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -55,7 +55,7 @@ router.get('/', async (req, res) => {
   try {
     const { mealType, day } = req.query;
     let query = { isAvailable: true };
-    
+
     if (mealType) query.mealType = mealType;
     if (day) query.dayOfWeek = { $in: [day, 'All'] };
 
@@ -64,12 +64,12 @@ router.get('/', async (req, res) => {
     res.json({
       success: true,
       count: menuItems.length,
-      data: menuItems
+      data: menuItems,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -84,18 +84,18 @@ router.get('/:id', async (req, res) => {
     if (!menuItem) {
       return res.status(404).json({
         success: false,
-        message: 'Menu item not found'
+        message: 'Menu item not found',
       });
     }
 
     res.json({
       success: true,
-      data: menuItem
+      data: menuItem,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -109,12 +109,12 @@ router.post('/', protect, adminOnly, async (req, res) => {
 
     res.status(201).json({
       success: true,
-      data: menuItem
+      data: menuItem,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -124,27 +124,26 @@ router.post('/', protect, adminOnly, async (req, res) => {
 // @access  Private/Admin
 router.put('/:id', protect, adminOnly, async (req, res) => {
   try {
-    const menuItem = await Menu.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const menuItem = await Menu.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!menuItem) {
       return res.status(404).json({
         success: false,
-        message: 'Menu item not found'
+        message: 'Menu item not found',
       });
     }
 
     res.json({
       success: true,
-      data: menuItem
+      data: menuItem,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -159,18 +158,18 @@ router.delete('/:id', protect, adminOnly, async (req, res) => {
     if (!menuItem) {
       return res.status(404).json({
         success: false,
-        message: 'Menu item not found'
+        message: 'Menu item not found',
       });
     }
 
     res.json({
       success: true,
-      message: 'Menu item deleted successfully'
+      message: 'Menu item deleted successfully',
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

@@ -7,16 +7,16 @@ const { protect } = require('../middleware/auth');
 const PRICING = {
   veg: {
     monthlyPrice: 2200,
-    pricePerTiffin: 120
+    pricePerTiffin: 120,
   },
   'non-veg': {
     monthlyPrice: 2800,
-    pricePerTiffin: 150
+    pricePerTiffin: 150,
   },
   jain: {
     monthlyPrice: 2400,
-    pricePerTiffin: 130
-  }
+    pricePerTiffin: 130,
+  },
 };
 
 // @route   GET /api/subscriptions/pricing
@@ -25,7 +25,7 @@ const PRICING = {
 router.get('/pricing', (req, res) => {
   res.json({
     success: true,
-    data: PRICING
+    data: PRICING,
   });
 });
 
@@ -41,12 +41,12 @@ router.get('/', protect, async (req, res) => {
     res.json({
       success: true,
       count: subscriptions.length,
-      data: subscriptions
+      data: subscriptions,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -61,13 +61,14 @@ router.post('/', protect, async (req, res) => {
     // Check if user already has an active subscription
     const existingSubscription = await Subscription.findOne({
       user: req.user._id,
-      status: { $in: ['active', 'paused'] }
+      status: { $in: ['active', 'paused'] },
     });
 
     if (existingSubscription) {
       return res.status(400).json({
         success: false,
-        message: 'You already have an active subscription. Please cancel it first to subscribe to a new plan.'
+        message:
+          'You already have an active subscription. Please cancel it first to subscribe to a new plan.',
       });
     }
 
@@ -76,7 +77,7 @@ router.post('/', protect, async (req, res) => {
     if (!pricing) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid meal type. Choose from: veg, non-veg, jain'
+        message: 'Invalid meal type. Choose from: veg, non-veg, jain',
       });
     }
 
@@ -88,18 +89,18 @@ router.post('/', protect, async (req, res) => {
       deliveryTime: deliveryTime || 'lunch',
       specialInstructions,
       startDate: new Date(),
-      status: 'active'
+      status: 'active',
     });
 
     res.status(201).json({
       success: true,
       message: `Successfully subscribed to ${mealType} plan at ₹${pricing.monthlyPrice}/month`,
-      data: subscription
+      data: subscription,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -114,7 +115,7 @@ router.put('/:id', protect, async (req, res) => {
     if (!subscription) {
       return res.status(404).json({
         success: false,
-        message: 'Subscription not found'
+        message: 'Subscription not found',
       });
     }
 
@@ -122,7 +123,7 @@ router.put('/:id', protect, async (req, res) => {
     if (subscription.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to update this subscription'
+        message: 'Not authorized to update this subscription',
       });
     }
 
@@ -135,20 +136,19 @@ router.put('/:id', protect, async (req, res) => {
       }
     }
 
-    subscription = await Subscription.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    subscription = await Subscription.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
 
     res.json({
       success: true,
-      data: subscription
+      data: subscription,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -163,7 +163,7 @@ router.put('/:id/pause', protect, async (req, res) => {
     if (!subscription) {
       return res.status(404).json({
         success: false,
-        message: 'Subscription not found'
+        message: 'Subscription not found',
       });
     }
 
@@ -171,7 +171,7 @@ router.put('/:id/pause', protect, async (req, res) => {
     if (subscription.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized'
+        message: 'Not authorized',
       });
     }
 
@@ -181,12 +181,12 @@ router.put('/:id/pause', protect, async (req, res) => {
     res.json({
       success: true,
       message: 'Subscription paused successfully',
-      data: subscription
+      data: subscription,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -201,7 +201,7 @@ router.put('/:id/resume', protect, async (req, res) => {
     if (!subscription) {
       return res.status(404).json({
         success: false,
-        message: 'Subscription not found'
+        message: 'Subscription not found',
       });
     }
 
@@ -209,7 +209,7 @@ router.put('/:id/resume', protect, async (req, res) => {
     if (subscription.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized'
+        message: 'Not authorized',
       });
     }
 
@@ -219,12 +219,12 @@ router.put('/:id/resume', protect, async (req, res) => {
     res.json({
       success: true,
       message: 'Subscription resumed successfully',
-      data: subscription
+      data: subscription,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -239,7 +239,7 @@ router.delete('/:id', protect, async (req, res) => {
     if (!subscription) {
       return res.status(404).json({
         success: false,
-        message: 'Subscription not found'
+        message: 'Subscription not found',
       });
     }
 
@@ -247,7 +247,7 @@ router.delete('/:id', protect, async (req, res) => {
     if (subscription.user.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized to cancel this subscription'
+        message: 'Not authorized to cancel this subscription',
       });
     }
 
@@ -257,12 +257,12 @@ router.delete('/:id', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: 'Subscription cancelled successfully'
+      message: 'Subscription cancelled successfully',
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

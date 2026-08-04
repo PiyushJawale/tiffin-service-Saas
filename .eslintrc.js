@@ -5,11 +5,7 @@ module.exports = {
     es2021: true,
     jest: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:node/recommended',
-    'prettier',
-  ],
+  extends: ['eslint:recommended', 'plugin:node/recommended', 'prettier'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -34,11 +30,5 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: [
-    'node_modules/',
-    'dist/',
-    'build/',
-    'coverage/',
-    'client/',
-  ],
+  ignorePatterns: ['node_modules/', 'dist/', 'build/', 'coverage/', 'client/'],
 };

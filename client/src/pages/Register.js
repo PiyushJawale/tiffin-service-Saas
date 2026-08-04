@@ -13,8 +13,8 @@ const Register = () => {
     address: {
       street: '',
       area: '',
-      pincode: ''
-    }
+      pincode: '',
+    },
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,13 +29,13 @@ const Register = () => {
         ...formData,
         address: {
           ...formData.address,
-          [addressField]: value
-        }
+          [addressField]: value,
+        },
       });
     } else {
       setFormData({
         ...formData,
-        [name]: value
+        [name]: value,
       });
     }
   };
@@ -62,7 +62,7 @@ const Register = () => {
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
-        address: formData.address
+        address: formData.address,
       });
       // After successful registration, user is automatically logged in
       // Navigate based on user role
@@ -194,19 +194,14 @@ const Register = () => {
             </div>
           </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary auth-btn"
-            disabled={loading}
-          >
+          <button type="submit" className="btn btn-primary auth-btn" disabled={loading}>
             {loading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
 
         <div className="auth-footer">
           <p>
-            Already have an account?{' '}
-            <Link to="/login">Login</Link>
+            Already have an account? <Link to="/login">Login</Link>
           </p>
         </div>
       </div>

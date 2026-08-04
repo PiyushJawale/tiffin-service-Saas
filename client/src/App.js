@@ -27,21 +27,21 @@ function App() {
               <Route path="/subscriptions" element={<Subscriptions />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route 
-                path="/dashboard" 
+              <Route
+                path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Dashboard />
                   </ProtectedRoute>
-                } 
+                }
               />
-              <Route 
-                path="/admin" 
+              <Route
+                path="/admin"
                 element={
                   <AdminRoute>
                     <AdminDashboard />
                   </AdminRoute>
-                } 
+                }
               />
               <Route path="/contact" element={<Contact />} />
             </Routes>

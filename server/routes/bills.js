@@ -1,15 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const Bill = require('../models/Bill');
-const DailyDelivery = require('../models/DailyDelivery');
 const Subscription = require('../models/Subscription');
 const ExtraTiffinOrder = require('../models/ExtraTiffinOrder');
 const { protect, adminOnly } = require('../middleware/auth');
 
 // Helper function to get month name
 function getMonthName(month) {
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                  'July', 'August', 'September', 'October', 'November', 'December'];
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
   return months[month - 1];
 }
 
@@ -17,16 +28,16 @@ function getMonthName(month) {
 const PRICING = {
   veg: {
     monthlyPrice: 2200,
-    pricePerTiffin: 120
+    pricePerTiffin: 120,
   },
   'non-veg': {
     monthlyPrice: 2800,
-    pricePerTiffin: 150
+    pricePerTiffin: 150,
   },
   jain: {
     monthlyPrice: 2400,
-    pricePerTiffin: 130
-  }
+    pricePerTiffin: 130,
+  },
 };
 
 // Helper to get subscription price
@@ -34,7 +45,7 @@ function getSubscriptionPrice(subscription) {
   if (subscription.monthlyPrice) {
     return {
       monthlyPrice: subscription.monthlyPrice,
-      pricePerTiffin: subscription.pricePerTiffin
+      pricePerTiffin: subscription.pricePerTiffin,
     };
   }
   // Fallback to pricing config for backward compatibility
@@ -54,12 +65,12 @@ router.get('/all', protect, adminOnly, async (req, res) => {
     res.json({
       success: true,
       count: bills.length,
-      data: bills
+      data: bills,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -69,18 +80,17 @@ router.get('/all', protect, adminOnly, async (req, res) => {
 // @access  Private
 router.get('/my-bills', protect, async (req, res) => {
   try {
-    const bills = await Bill.find({ user: req.user._id })
-      .sort({ year: -1, month: -1 });
+    const bills = await Bill.find({ user: req.user._id }).sort({ year: -1, month: -1 });
 
     res.json({
       success: true,
       count: bills.length,
-      data: bills
+      data: bills,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -95,9 +105,9 @@ router.get('/current-summary', protect, async (req, res) => {
     const currentYear = now.getFullYear();
 
     // Get user's subscription (active or paused - both should show in billing)
-    const subscription = await Subscription.findOne({ 
-      user: req.user._id, 
-      status: { $in: ['active', 'paused'] }
+    const subscription = await Subscription.findOne({
+      user: req.user._id,
+      status: { $in: ['active', 'paused'] },
     });
 
     // Get extra tiffin orders for current month
@@ -107,7 +117,7 @@ router.get('/current-summary', protect, async (req, res) => {
     const extraOrders = await ExtraTiffinOrder.find({
       user: req.user._id,
       date: { $gte: startDate, $lte: endDate },
-      addedToBill: false
+      addedToBill: false,
     });
 
     const extraTiffinsCount = extraOrders.length;
@@ -121,10 +131,13 @@ router.get('/current-summary', protect, async (req, res) => {
       const prices = getSubscriptionPrice(subscription);
       const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
       const currentDay = now.getDate();
-      
+
       // Check if subscription started this month
       const subStartDate = new Date(subscription.startDate);
-      if (subStartDate.getMonth() + 1 === currentMonth && subStartDate.getFullYear() === currentYear) {
+      if (
+        subStartDate.getMonth() + 1 === currentMonth &&
+        subStartDate.getFullYear() === currentYear
+      ) {
         // Pro-rate from start date
         const startDay = subStartDate.getDate();
         subscriptionDays = currentDay - startDay + 1;
@@ -147,24 +160,26 @@ router.get('/current-summary', protect, async (req, res) => {
         month: currentMonth,
         year: currentYear,
         monthName: getMonthName(currentMonth),
-        subscription: subscription ? {
-          mealType: subscription.mealType,
-          monthlyPrice: subscriptionPrices.monthlyPrice,
-          pricePerTiffin: subscriptionPrices.pricePerTiffin,
-          status: subscription.status
-        } : null,
+        subscription: subscription
+          ? {
+              mealType: subscription.mealType,
+              monthlyPrice: subscriptionPrices.monthlyPrice,
+              pricePerTiffin: subscriptionPrices.pricePerTiffin,
+              status: subscription.status,
+            }
+          : null,
         subscriptionAmount,
         subscriptionDays,
         extraTiffinsCount,
         extraTiffinsAmount,
         totalAmount,
-        extraOrders
-      }
+        extraOrders,
+      },
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -174,13 +189,12 @@ router.get('/current-summary', protect, async (req, res) => {
 // @access  Private
 router.get('/:id', protect, async (req, res) => {
   try {
-    const bill = await Bill.findById(req.params.id)
-      .populate('user', 'name email phone address');
+    const bill = await Bill.findById(req.params.id).populate('user', 'name email phone address');
 
     if (!bill) {
       return res.status(404).json({
         success: false,
-        message: 'Bill not found'
+        message: 'Bill not found',
       });
     }
 
@@ -188,18 +202,18 @@ router.get('/:id', protect, async (req, res) => {
     if (bill.user._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: 'Not authorized'
+        message: 'Not authorized',
       });
     }
 
     res.json({
       success: true,
-      data: bill
+      data: bill,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -216,20 +230,20 @@ router.post('/generate', protect, adminOnly, async (req, res) => {
     if (existingBill) {
       return res.status(400).json({
         success: false,
-        message: 'Bill already exists for this month'
+        message: 'Bill already exists for this month',
       });
     }
 
     // Get subscription for price
-    const subscription = await Subscription.findOne({ 
-      user: userId, 
-      status: 'active' 
+    const subscription = await Subscription.findOne({
+      user: userId,
+      status: 'active',
     });
 
     if (!subscription) {
       return res.status(400).json({
         success: false,
-        message: 'No active subscription found for this user'
+        message: 'No active subscription found for this user',
       });
     }
 
@@ -253,7 +267,7 @@ router.post('/generate', protect, adminOnly, async (req, res) => {
     const extraOrders = await ExtraTiffinOrder.find({
       user: userId,
       date: { $gte: startDate, $lte: endDate },
-      addedToBill: false
+      addedToBill: false,
     });
 
     const extraTiffinsCount = extraOrders.length;
@@ -278,17 +292,17 @@ router.post('/generate', protect, adminOnly, async (req, res) => {
       extraTiffinsAmount,
       totalAmount,
       status: 'pending',
-      dueDate: new Date(year, month, 10) // Due on 10th of next month
+      dueDate: new Date(year, month, 10), // Due on 10th of next month
     });
 
     res.status(201).json({
       success: true,
-      data: bill
+      data: bill,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -304,13 +318,15 @@ router.post('/generate-all', protect, adminOnly, async (req, res) => {
     const year = req.body.year || now.getFullYear();
 
     // Get all active subscriptions
-    const subscriptions = await Subscription.find({ status: 'active' })
-      .populate('user', 'name email');
+    const subscriptions = await Subscription.find({ status: 'active' }).populate(
+      'user',
+      'name email'
+    );
 
     if (subscriptions.length === 0) {
       return res.json({
         success: false,
-        message: 'No active subscriptions found. Users need to subscribe first.'
+        message: 'No active subscriptions found. Users need to subscribe first.',
       });
     }
 
@@ -320,10 +336,10 @@ router.post('/generate-all', protect, adminOnly, async (req, res) => {
     for (const sub of subscriptions) {
       try {
         // Check if bill already exists
-        const existingBill = await Bill.findOne({ 
-          user: sub.user._id, 
-          month, 
-          year 
+        const existingBill = await Bill.findOne({
+          user: sub.user._id,
+          month,
+          year,
         });
 
         // Calculate subscription amount
@@ -345,7 +361,7 @@ router.post('/generate-all', protect, adminOnly, async (req, res) => {
         const extraOrders = await ExtraTiffinOrder.find({
           user: sub.user._id,
           date: { $gte: startDate, $lte: endDate },
-          addedToBill: false
+          addedToBill: false,
         });
 
         const extraTiffinsCount = extraOrders.length;
@@ -374,7 +390,7 @@ router.post('/generate-all', protect, adminOnly, async (req, res) => {
             subscriptionAmount,
             extraTiffinsCount,
             extraTiffinsAmount,
-            totalAmount
+            totalAmount,
           });
         } else {
           // Create new bill
@@ -388,7 +404,7 @@ router.post('/generate-all', protect, adminOnly, async (req, res) => {
             extraTiffinsAmount,
             totalAmount,
             status: 'pending',
-            dueDate: new Date(year, month, 10)
+            dueDate: new Date(year, month, 10),
           });
 
           results.push({
@@ -397,27 +413,27 @@ router.post('/generate-all', protect, adminOnly, async (req, res) => {
             subscriptionAmount,
             extraTiffinsCount,
             extraTiffinsAmount,
-            totalAmount
+            totalAmount,
           });
         }
       } catch (err) {
         results.push({
           user: sub.user.name,
           status: 'error',
-          message: err.message
+          message: err.message,
         });
       }
     }
 
     res.json({
       success: true,
-      message: `Generated/Updated ${results.filter(r => r.status === 'created' || r.status === 'updated').length} bills for ${getMonthName(month)} ${year}`,
-      results
+      message: `Generated/Updated ${results.filter((r) => r.status === 'created' || r.status === 'updated').length} bills for ${getMonthName(month)} ${year}`,
+      results,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -429,9 +445,9 @@ router.put('/:id/pay', protect, adminOnly, async (req, res) => {
   try {
     const bill = await Bill.findByIdAndUpdate(
       req.params.id,
-      { 
+      {
         status: 'paid',
-        paidAt: new Date()
+        paidAt: new Date(),
       },
       { new: true }
     ).populate('user', 'name email phone');
@@ -439,18 +455,18 @@ router.put('/:id/pay', protect, adminOnly, async (req, res) => {
     if (!bill) {
       return res.status(404).json({
         success: false,
-        message: 'Bill not found'
+        message: 'Bill not found',
       });
     }
 
     res.json({
       success: true,
-      data: bill
+      data: bill,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -465,7 +481,7 @@ router.put('/:id/toggle-status', protect, adminOnly, async (req, res) => {
     if (!bill) {
       return res.status(404).json({
         success: false,
-        message: 'Bill not found'
+        message: 'Bill not found',
       });
     }
 
@@ -480,17 +496,19 @@ router.put('/:id/toggle-status', protect, adminOnly, async (req, res) => {
 
     await bill.save();
 
-    const updatedBill = await Bill.findById(req.params.id)
-      .populate('user', 'name email phone address');
+    const updatedBill = await Bill.findById(req.params.id).populate(
+      'user',
+      'name email phone address'
+    );
 
     res.json({
       success: true,
-      data: updatedBill
+      data: updatedBill,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

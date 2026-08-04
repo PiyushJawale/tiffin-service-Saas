@@ -13,7 +13,7 @@ exports.protect = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: 'Not authorized to access this route'
+        message: 'Not authorized to access this route',
       });
     }
 
@@ -23,7 +23,7 @@ exports.protect = async (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: 'User not found'
+        message: 'User not found',
       });
     }
 
@@ -31,7 +31,7 @@ exports.protect = async (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       success: false,
-      message: 'Not authorized to access this route'
+      message: 'Not authorized to access this route',
     });
   }
 };
@@ -41,7 +41,7 @@ exports.adminOnly = (req, res, next) => {
   if (req.user.role !== 'admin') {
     return res.status(403).json({
       success: false,
-      message: 'Admin access required'
+      message: 'Admin access required',
     });
   }
   next();

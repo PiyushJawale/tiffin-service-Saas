@@ -7,7 +7,7 @@ const { protect } = require('../middleware/auth');
 // Generate JWT Token
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'your-secret-key', {
-    expiresIn: '30d'
+    expiresIn: '30d',
   });
 };
 
@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: 'User already exists with this email'
+        message: 'User already exists with this email',
       });
     }
 
@@ -33,7 +33,7 @@ router.post('/register', async (req, res) => {
       email,
       phone,
       password,
-      address
+      address,
     });
 
     const token = generateToken(user._id);
@@ -41,12 +41,12 @@ router.post('/register', async (req, res) => {
     res.status(201).json({
       success: true,
       data: user,
-      token
+      token,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -63,7 +63,7 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
@@ -72,7 +72,7 @@ router.post('/login', async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
@@ -81,12 +81,12 @@ router.post('/login', async (req, res) => {
     res.json({
       success: true,
       data: user,
-      token
+      token,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -99,12 +99,12 @@ router.get('/me', protect, async (req, res) => {
     const user = await User.findById(req.user._id);
     res.json({
       success: true,
-      data: user
+      data: user,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -115,7 +115,7 @@ router.get('/me', protect, async (req, res) => {
 router.put('/profile', protect, async (req, res) => {
   try {
     const { name, phone, address } = req.body;
-    
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { name, phone, address },
@@ -124,12 +124,12 @@ router.put('/profile', protect, async (req, res) => {
 
     res.json({
       success: true,
-      data: user
+      data: user,
     });
   } catch (error) {
     res.status(400).json({
       success: false,
-      message: error.message
+      message: error.message,
     });
   }
 });

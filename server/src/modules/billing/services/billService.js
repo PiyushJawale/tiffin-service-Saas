@@ -295,7 +295,9 @@ class BillService {
       }
     }
 
-    const successCount = results.filter((r) => r.status === 'created' || r.status === 'updated').length;
+    const successCount = results.filter(
+      (r) => r.status === 'created' || r.status === 'updated'
+    ).length;
     return {
       message: `Generated/Updated ${successCount} bills for ${getMonthName(month)} ${year}`,
       results,

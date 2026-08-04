@@ -11,18 +11,26 @@ const Footer = () => {
             <span>🍱</span> Mumbai Tiffin
           </h3>
           <p className="footer-description">
-            Fresh homemade meals delivered daily to your doorstep in Mumbai. 
-            Experience the taste of home, away from home.
+            Fresh homemade meals delivered daily to your doorstep in Mumbai. Experience the taste of
+            home, away from home.
           </p>
         </div>
 
         <div className="footer-section">
           <h4>Quick Links</h4>
           <ul className="footer-links">
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/menu">Menu</Link></li>
-            <li><Link to="/subscriptions">Subscriptions</Link></li>
-            <li><Link to="/contact">Contact Us</Link></li>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/menu">Menu</Link>
+            </li>
+            <li>
+              <Link to="/subscriptions">Subscriptions</Link>
+            </li>
+            <li>
+              <Link to="/contact">Contact Us</Link>
+            </li>
           </ul>
         </div>
 

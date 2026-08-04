@@ -39,9 +39,11 @@ const Menu = () => {
       await api.post('/extra-tiffins/order', {
         menuId: menuItem?._id,
         mealType: mealType,
-        price: menuItem?.price || 120
+        price: menuItem?.price || 120,
       });
-      setShowSuccess(`Extra ${mealType} tiffin ordered successfully! It will be added to your monthly bill.`);
+      setShowSuccess(
+        `Extra ${mealType} tiffin ordered successfully! It will be added to your monthly bill.`
+      );
       setTimeout(() => setShowSuccess(''), 4000);
     } catch (error) {
       console.error('Order error:', error);
@@ -53,14 +55,14 @@ const Menu = () => {
 
   const getMealTypeTag = (type) => {
     const classes = {
-      'veg': 'tag-veg',
+      veg: 'tag-veg',
       'non-veg': 'tag-nonveg',
-      'jain': 'tag-jain'
+      jain: 'tag-jain',
     };
     const labels = {
-      'veg': '🥬 Veg',
+      veg: '🥬 Veg',
       'non-veg': '🍗 Non-Veg',
-      'jain': '🧅 Jain'
+      jain: '🧅 Jain',
     };
     return <span className={`tag ${classes[type]}`}>{labels[type]}</span>;
   };
@@ -72,17 +74,11 @@ const Menu = () => {
       <div className="container">
         <div className="page-header">
           <h1 className="page-title">Today's Menu</h1>
-          <p className="page-subtitle">
-            {todayMenu?.date || 'Loading...'}
-          </p>
+          <p className="page-subtitle">{todayMenu?.date || 'Loading...'}</p>
         </div>
 
         {/* Success Message */}
-        {showSuccess && (
-          <div className="success-banner">
-            ✅ {showSuccess}
-          </div>
-        )}
+        {showSuccess && <div className="success-banner">✅ {showSuccess}</div>}
 
         {/* Today's Menu */}
         {loading ? (
@@ -92,25 +88,23 @@ const Menu = () => {
             <div className="menu-intro">
               <h2>🍽️ Order Extra Tiffin</h2>
               <p>
-                Don't have a subscription? Or want an extra tiffin today? 
-                Order from today's menu and it will be added to your monthly bill.
+                Don't have a subscription? Or want an extra tiffin today? Order from today's menu
+                and it will be added to your monthly bill.
               </p>
             </div>
 
             <div className="today-menu-grid">
-              {mealTypes.map(mealType => {
+              {mealTypes.map((mealType) => {
                 const menuItem = todayMenu?.[mealType];
                 return (
                   <div key={mealType} className="today-menu-card">
-                    <div className="menu-card-header">
-                      {getMealTypeTag(mealType)}
-                    </div>
-                    
+                    <div className="menu-card-header">{getMealTypeTag(mealType)}</div>
+
                     {menuItem ? (
                       <>
                         <h3 className="menu-name">{menuItem.name}</h3>
                         <p className="menu-description">{menuItem.description}</p>
-                        
+
                         {menuItem.items && menuItem.items.length > 0 && (
                           <div className="menu-items">
                             <strong>Today's Items:</strong>
@@ -166,22 +160,22 @@ const Menu = () => {
           <div className="info-card">
             <h3>📦 How Extra Orders Work</h3>
             <p>
-              When you order an extra tiffin, it gets added to your monthly bill. 
-              You'll see the total at the end of the month including your subscription + extra orders.
+              When you order an extra tiffin, it gets added to your monthly bill. You'll see the
+              total at the end of the month including your subscription + extra orders.
             </p>
           </div>
           <div className="info-card">
             <h3>⏰ Order Timing</h3>
             <p>
-              Orders placed before 10 AM will be delivered the same day. 
-              Orders after 10 AM will be delivered the next day.
+              Orders placed before 10 AM will be delivered the same day. Orders after 10 AM will be
+              delivered the next day.
             </p>
           </div>
           <div className="info-card">
             <h3>💡 Tip</h3>
             <p>
-              Have a subscription? Your daily tiffin is already included. 
-              Order extra only when you need an additional tiffin.
+              Have a subscription? Your daily tiffin is already included. Order extra only when you
+              need an additional tiffin.
             </p>
           </div>
         </div>

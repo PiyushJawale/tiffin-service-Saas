@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     phone: '',
     password: '',
     role: 'user',
-    address: { street: '', area: '', city: 'Mumbai', pincode: '' }
+    address: { street: '', area: '', city: 'Mumbai', pincode: '' },
   });
   const [addUserError, setAddUserError] = useState('');
   const [addUserSuccess, setAddUserSuccess] = useState('');
@@ -72,16 +72,16 @@ const AdminDashboard = () => {
       setLoading(true);
       const currentMonth = new Date().getMonth() + 1;
       const currentYear = new Date().getFullYear();
-      
+
       // Fetch current month delivery stats (amount till date)
       const statsRes = await api.get('/admin/monthly-report', {
         params: {
           month: currentMonth,
-          year: currentYear
-        }
+          year: currentYear,
+        },
       });
       setCurrentMonthStats(statsRes.data.data);
-      
+
       // Fetch all generated bills
       const billsRes = await api.get('/bills/all');
       setBills(billsRes.data.data);
@@ -95,7 +95,7 @@ const AdminDashboard = () => {
   const toggleDelivery = async (deliveryId, currentStatus) => {
     try {
       await api.put(`/deliveries/${deliveryId}`, {
-        delivered: !currentStatus
+        delivered: !currentStatus,
       });
       fetchDeliveries();
     } catch (error) {
@@ -105,15 +105,15 @@ const AdminDashboard = () => {
 
   const generateBills = async () => {
     if (!window.confirm('Generate bills for all users for this month?')) return;
-    
+
     try {
       setLoading(true);
       const currentMonth = new Date().getMonth() + 1;
       const currentYear = new Date().getFullYear();
-      
+
       const res = await api.post('/bills/generate-all', {
         month: currentMonth,
-        year: currentYear
+        year: currentYear,
       });
       alert(res.data.message);
       fetchAllBills();
@@ -136,8 +136,20 @@ const AdminDashboard = () => {
   };
 
   const getMonthName = (month) => {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                    'July', 'August', 'September', 'October', 'November', 'December'];
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
     return months[month - 1];
   };
 
@@ -160,7 +172,7 @@ const AdminDashboard = () => {
         phone: '',
         password: '',
         role: 'user',
-        address: { street: '', area: '', city: 'Mumbai', pincode: '' }
+        address: { street: '', area: '', city: 'Mumbai', pincode: '' },
       });
       fetchUsers();
       setTimeout(() => {
@@ -241,10 +253,7 @@ const AdminDashboard = () => {
         {activeTab === 'users' && (
           <div className="users-content">
             <div className="users-header">
-              <button 
-                className="btn btn-primary"
-                onClick={() => setShowAddUserModal(true)}
-              >
+              <button className="btn btn-primary" onClick={() => setShowAddUserModal(true)}>
                 + Add New User
               </button>
             </div>
@@ -255,7 +264,7 @@ const AdminDashboard = () => {
                 <div className="modal">
                   <div className="modal-header">
                     <h3>Add New User</h3>
-                    <button 
+                    <button
                       className="modal-close"
                       onClick={() => {
                         setShowAddUserModal(false);
@@ -269,14 +278,14 @@ const AdminDashboard = () => {
                   <form onSubmit={handleAddUser} className="modal-form">
                     {addUserError && <div className="error-message">{addUserError}</div>}
                     {addUserSuccess && <div className="success-message">{addUserSuccess}</div>}
-                    
+
                     <div className="form-row">
                       <div className="form-group">
                         <label>Full Name</label>
                         <input
                           type="text"
                           value={newUser.name}
-                          onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                          onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
                           required
                         />
                       </div>
@@ -285,29 +294,29 @@ const AdminDashboard = () => {
                         <input
                           type="tel"
                           value={newUser.phone}
-                          onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                          onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
                           required
                         />
                       </div>
                     </div>
-                    
+
                     <div className="form-group">
                       <label>Email</label>
                       <input
                         type="email"
                         value={newUser.email}
-                        onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                         required
                       />
                     </div>
-                    
+
                     <div className="form-row">
                       <div className="form-group">
                         <label>Password</label>
                         <input
                           type="password"
                           value={newUser.password}
-                          onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                           required
                           minLength="6"
                         />
@@ -316,36 +325,40 @@ const AdminDashboard = () => {
                         <label>Role</label>
                         <select
                           value={newUser.role}
-                          onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                          onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                         >
                           <option value="user">User</option>
                           <option value="admin">Admin</option>
                         </select>
                       </div>
                     </div>
-                    
+
                     <div className="form-group">
                       <label>Street Address</label>
                       <input
                         type="text"
                         value={newUser.address.street}
-                        onChange={(e) => setNewUser({
-                          ...newUser, 
-                          address: {...newUser.address, street: e.target.value}
-                        })}
+                        onChange={(e) =>
+                          setNewUser({
+                            ...newUser,
+                            address: { ...newUser.address, street: e.target.value },
+                          })
+                        }
                       />
                     </div>
-                    
+
                     <div className="form-row">
                       <div className="form-group">
                         <label>Area</label>
                         <input
                           type="text"
                           value={newUser.address.area}
-                          onChange={(e) => setNewUser({
-                            ...newUser, 
-                            address: {...newUser.address, area: e.target.value}
-                          })}
+                          onChange={(e) =>
+                            setNewUser({
+                              ...newUser,
+                              address: { ...newUser.address, area: e.target.value },
+                            })
+                          }
                         />
                       </div>
                       <div className="form-group">
@@ -353,16 +366,22 @@ const AdminDashboard = () => {
                         <input
                           type="text"
                           value={newUser.address.pincode}
-                          onChange={(e) => setNewUser({
-                            ...newUser, 
-                            address: {...newUser.address, pincode: e.target.value}
-                          })}
+                          onChange={(e) =>
+                            setNewUser({
+                              ...newUser,
+                              address: { ...newUser.address, pincode: e.target.value },
+                            })
+                          }
                         />
                       </div>
                     </div>
-                    
+
                     <div className="modal-actions">
-                      <button type="button" className="btn btn-secondary" onClick={() => setShowAddUserModal(false)}>
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => setShowAddUserModal(false)}
+                      >
                         Cancel
                       </button>
                       <button type="submit" className="btn btn-primary">
@@ -374,7 +393,9 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {loading ? <div className="loader"></div> : (
+            {loading ? (
+              <div className="loader"></div>
+            ) : (
               <div className="users-table">
                 <table>
                   <thead>
@@ -388,7 +409,7 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {users.map(user => (
+                    {users.map((user) => (
                       <tr key={user._id}>
                         <td>{user.name}</td>
                         <td>{user.phone}</td>
@@ -400,7 +421,9 @@ const AdminDashboard = () => {
                         </td>
                         <td>₹{user.subscription?.monthlyPrice || '-'}</td>
                         <td>
-                          <span className={`badge badge-${user.subscription?.status === 'active' ? 'success' : 'warning'}`}>
+                          <span
+                            className={`badge badge-${user.subscription?.status === 'active' ? 'success' : 'warning'}`}
+                          >
                             {user.subscription?.status || 'No subscription'}
                           </span>
                         </td>
@@ -425,7 +448,7 @@ const AdminDashboard = () => {
                 onChange={(e) => setSelectedDate(e.target.value)}
                 className="date-input"
               />
-              <button 
+              <button
                 className="btn btn-secondary"
                 onClick={async () => {
                   await api.post('/deliveries/create-daily', { date: selectedDate });
@@ -436,9 +459,11 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            {loading ? <div className="loader"></div> : (
+            {loading ? (
+              <div className="loader"></div>
+            ) : (
               <div className="tracking-list">
-                {deliveries.map(delivery => (
+                {deliveries.map((delivery) => (
                   <div key={delivery._id} className="tracking-item">
                     <div className="user-info">
                       <strong>{delivery.user?.name}</strong>
@@ -481,7 +506,10 @@ const AdminDashboard = () => {
             {/* Current Month Stats - Amount Till Date */}
             {currentMonthStats && currentMonthStats.length > 0 && (
               <div className="current-month-section">
-                <h4>📊 Current Month - Amount Till Date ({getMonthName(new Date().getMonth() + 1)} {new Date().getFullYear()})</h4>
+                <h4>
+                  📊 Current Month - Amount Till Date ({getMonthName(new Date().getMonth() + 1)}{' '}
+                  {new Date().getFullYear()})
+                </h4>
                 <div className="billing-list">
                   {currentMonthStats.map((item, index) => (
                     <div key={`current-${index}`} className="billing-item current-month">
@@ -499,7 +527,9 @@ const AdminDashboard = () => {
                         </div>
                         <div className="stat">
                           <label>Delivered Days</label>
-                          <span>{item.deliveredDays} / {item.totalDays}</span>
+                          <span>
+                            {item.deliveredDays} / {item.totalDays}
+                          </span>
                         </div>
                         <div className="stat total-amount">
                           <label>Amount Till Date</label>
@@ -515,21 +545,27 @@ const AdminDashboard = () => {
             {/* Generated Bills Section */}
             <div className="generated-bills-section">
               <h4>📄 Generated Bills</h4>
-              {loading ? <div className="loader"></div> : (
+              {loading ? (
+                <div className="loader"></div>
+              ) : (
                 <div className="billing-list">
                   {bills.map((bill, index) => (
                     <div key={index} className="billing-item">
                       <div className="billing-user">
                         <strong>{bill.user?.name}</strong>
                         <span>{bill.user?.address?.area}</span>
-                        <span className={`badge badge-${bill.status === 'paid' ? 'success' : 'warning'}`}>
+                        <span
+                          className={`badge badge-${bill.status === 'paid' ? 'success' : 'warning'}`}
+                        >
                           {bill.status}
                         </span>
                       </div>
                       <div className="billing-stats">
                         <div className="stat">
                           <label>Period</label>
-                          <span>{getMonthName(bill.month)} {bill.year}</span>
+                          <span>
+                            {getMonthName(bill.month)} {bill.year}
+                          </span>
                         </div>
                         <div className="stat">
                           <label>Subscription</label>
@@ -547,7 +583,7 @@ const AdminDashboard = () => {
                         </div>
                       </div>
                       <div className="bill-actions">
-                        <button 
+                        <button
                           className={`btn btn-sm ${bill.status === 'paid' ? 'btn-warning' : 'btn-success'}`}
                           onClick={() => toggleBillStatus(bill._id, bill.status)}
                         >
@@ -556,7 +592,11 @@ const AdminDashboard = () => {
                       </div>
                     </div>
                   ))}
-                  {bills.length === 0 && <p className="no-data">No bills generated yet. Click "Generate Bills" to create bills.</p>}
+                  {bills.length === 0 && (
+                    <p className="no-data">
+                      No bills generated yet. Click "Generate Bills" to create bills.
+                    </p>
+                  )}
                 </div>
               )}
             </div>

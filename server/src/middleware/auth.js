@@ -76,7 +76,9 @@ const authorize = (...roles) => {
     }
 
     if (!roles.includes(req.user.role)) {
-      return next(ApiError.forbidden(`Role '${req.user.role}' is not authorized to access this route`));
+      return next(
+        ApiError.forbidden(`Role '${req.user.role}' is not authorized to access this route`)
+      );
     }
 
     next();
