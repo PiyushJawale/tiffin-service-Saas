@@ -54,11 +54,15 @@ api.interceptors.response.use(
 
     // Handle 401 errors
     if (error.response?.status === 401 && !originalRequest._retry) {
-      // If refresh token endpoint fails, logout
-      if (
-        originalRequest.url.includes('/auth/refresh-token') ||
-        originalRequest.url.includes('/auth/login')
-      ) {
+      // A failed login attempt (bad credentials) must surface the error to the
+      // login form instead of reloading the page. The user is already on /login,
+      // and reloading just swallows the "Invalid credentials" message.
+      if (originalRequest.url.includes('/auth/login')) {
+        return Promise.reject(error);
+      }
+
+      // If the refresh-token endpoint itself fails, the session is invalid -> force re-login
+      if (originalRequest.url.includes('/auth/refresh-token')) {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         window.location.href = '/login';

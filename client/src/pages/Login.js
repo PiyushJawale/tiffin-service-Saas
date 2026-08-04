@@ -27,8 +27,8 @@ const Login = () => {
 
     try {
       const result = await login(formData.email, formData.password);
-      // The login function returns { success, data, token } where data is the user
-      if (result.data && result.data.role === 'admin') {
+      // result.data = { user, token, refreshToken }
+      if (result.data?.user?.role === 'admin') {
         navigate('/admin');
       } else {
         navigate('/dashboard');
