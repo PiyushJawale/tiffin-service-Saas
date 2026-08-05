@@ -21,11 +21,27 @@ Open terminal in project root (D:\Projects\tiffin-service) and run:
   npm install --prefix client
 
 --------------------------------------------------------------------------------
-STEP 2: SEED DATABASE (First time only or to reset data)
+STEP 2: CREATE FIRST ADMIN USER (one-time, per machine)
 --------------------------------------------------------------------------------
-  npm run seed --prefix server
+  No "seed" script exists. Two supported ways to bootstrap your first admin:
 
-This creates test users and sample data.
+  Option A (recommended) - Use the Admin Dashboard after registering a user:
+    1. Register a regular account via the UI or POST /api/v1/auth/register.
+    2. Open MongoDB Compass / mongosh and update that user's role to "admin".
+    3. Login at http://localhost:3000/login and use the dashboard to add more.
+
+  Option B - Direct database insert via mongosh:
+    use tiffin-service
+    db.users.insertOne({
+      name: "Admin", role: "admin", email: "admin@tiffin.com",
+      password: "<bcrypt-hash-of-admin123>", phone: "+91 12345 67890",
+      address: { street: "1 Admin Street", area: "Andheri",
+                city: "Mumbai", pincode: "400001" }
+    })
+
+  Demo accounts already in the MongoDB volume (created during Docker bring-up):
+    admin@tiffin.com  / admin123
+    user@tiffin.com   / user123
 
 --------------------------------------------------------------------------------
 STEP 3: START THE SERVER (Backend)
@@ -58,7 +74,6 @@ QUICK START (All commands in sequence):
 1. Open first terminal:
    npm install --prefix server
    npm install --prefix client
-   npm run seed --prefix server
    npm start --prefix server
 
 2. Open second terminal:
@@ -67,35 +82,19 @@ QUICK START (All commands in sequence):
 3. Open browser: http://localhost:3000
 
 --------------------------------------------------------------------------------
-HOW TO USE WITHOUT SEED DATA:
+HOW TO CREATE ADDITIONAL USERS (admin dashboard):
 --------------------------------------------------------------------------------
-1. First time: You need at least ONE admin user to manage the portal
-2. Options to create the first admin:
-   
-   Option A - Use seed data (recommended for first time):
-     npm run seed --prefix server
-     This creates: admin@tiffin.com / admin123
-   
-   Option B - Create admin directly in MongoDB:
-     Use MongoDB Compass or mongosh to insert a user document with role: "admin"
-   
-   Option C - Register via API (using curl):
-     curl -X POST http://localhost:5000/api/auth/register ^
-       -H "Content-Type: application/json" ^
-       -d "{\"name\":\"Admin\",\"email\":\"admin@example.com\",\"phone\":\"+91 12345 67890\",\"password\":\"admin123\",\"address\":{\"street\":\"123 Street\",\"area\":\"Area\",\"city\":\"Mumbai\",\"pincode\":\"400001\"}}"
-     Then manually update the user's role to "admin" in MongoDB
+1. First admin must already exist in MongoDB (see STEP 2 above).
+2. Login as admin at http://localhost:3000/login
+3. Go to the "Users" tab in the Admin Dashboard
+4. Click "+ Add New User" button
+5. Fill in details and select Role (User or Admin)
+6. Create as many users/admins as needed
 
-3. After first admin is created:
-   - Login as admin at http://localhost:3000/login
-   - Go to "Users" tab in Admin Dashboard
-   - Click "+ Add New User" button
-   - Fill in details and select Role (User or Admin)
-   - Create as many users/admins as needed
-
-4. Regular users can also self-register:
-   - Go to http://localhost:3000/register
-   - Fill in details and create account
-   - They will have "user" role by default
+Regular users can also self-register:
+  - Go to http://localhost:3000/register
+  - Fill in details and create account
+  - They will have "user" role by default
 
 --------------------------------------------------------------------------------
 TROUBLESHOOTING:
@@ -103,7 +102,7 @@ TROUBLESHOOTING:
 - If MongoDB connection fails, ensure MongoDB service is running
 - If port 5000 is in use, change PORT in server/.env file
 - If port 3000 is in use, React will prompt to use another port
-- If login fails, run: npm run seed --prefix server
+- If login fails, confirm the admin user exists in MongoDB (see STEP 2)
 - If server crashes, restart it: npm start --prefix server
 
 --------------------------------------------------------------------------------
