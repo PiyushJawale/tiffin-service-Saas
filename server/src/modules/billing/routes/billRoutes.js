@@ -16,10 +16,14 @@ const {
 // Protected routes
 router.get('/my-bills', protect, billController.getMyBills);
 router.get('/current-summary', protect, billController.getCurrentSummary);
-router.get('/:id', protect, billController.getBillById);
 
 // Admin only routes
+// NOTE: `/all` MUST be declared before `/:id` — otherwise Express matches
+// `/bills/all` against `/:id` and tries to cast "all" as a Mongo ObjectId,
+// which returns "Invalid _id: all" and silently breaks the admin
+// "Generated Bills" section.
 router.get('/all', protect, adminOnly, billController.getAllBills);
+router.get('/:id', protect, billController.getBillById);
 router.post(
   '/generate',
   protect,

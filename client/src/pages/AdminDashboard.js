@@ -92,11 +92,17 @@ const AdminDashboard = () => {
     }
   };
 
-  const toggleDelivery = async (deliveryId, currentStatus) => {
+  const toggleDelivery = async (delivery) => {
     try {
-      await api.put(`/deliveries/${deliveryId}`, {
-        delivered: !currentStatus,
-      });
+      // Extra tiffin orders are marked delivered via their own endpoint; the
+      // deliver endpoint sets delivered=true (toggle back is not supported).
+      if (delivery.kind === 'extra') {
+        await api.put(`/extra-tiffins/${delivery._id}/deliver`);
+      } else {
+        await api.put(`/deliveries/${delivery._id}`, {
+          delivered: !delivery.delivered,
+        });
+      }
       fetchDeliveries();
     } catch (error) {
       console.error('Error updating delivery:', error);
@@ -468,8 +474,16 @@ const AdminDashboard = () => {
                     <div className="user-info">
                       <strong>{delivery.user?.name}</strong>
                       <span>{delivery.user?.phone}</span>
-                      <span className={`tag tag-${delivery.subscription?.mealType}`}>
-                        {delivery.subscription?.mealType}
+                      <span
+                        className={`tag tag-${
+                          delivery.kind === 'extra'
+                            ? delivery.mealType
+                            : delivery.subscription?.mealType
+                        }`}
+                      >
+                        {delivery.kind === 'extra'
+                          ? `Extra (${delivery.mealType})`
+                          : delivery.subscription?.mealType}
                       </span>
                     </div>
                     <div className="delivery-action">
@@ -477,7 +491,7 @@ const AdminDashboard = () => {
                         <input
                           type="checkbox"
                           checked={delivery.delivered}
-                          onChange={() => toggleDelivery(delivery._id, delivery.delivered)}
+                          onChange={() => toggleDelivery(delivery)}
                         />
                         <span className="slider"></span>
                       </label>

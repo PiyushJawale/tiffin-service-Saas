@@ -45,6 +45,7 @@ temp/
 
 # Documentation (generated)
 docs/generated/
+FIX_LOG_2026-08-11.md
 
 # Plan files
 TIFFIN_SERVICE_PLAN_V2.md
@@ -57,3 +58,6 @@ IMPLEMENTATION_PLAN.md
 
 # Husky
 .husky/_
+# Local runbook (project-local, not tracked)
+FEATURE_IMPLEMENTATION_RUNBOOK.md
+

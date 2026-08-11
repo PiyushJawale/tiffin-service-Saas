@@ -1,4 +1,5 @@
 const deliveryRepository = require('../repositories/deliveryRepository');
+const extraTiffinRepository = require('../../extraTiffins/repositories/extraTiffinRepository');
 const subscriptionRepository = require('../../subscriptions/repositories/subscriptionRepository');
 const ApiError = require('../../../utils/ApiError');
 const { getMonthDateRange, getDayRange } = require('../../../helpers/dateHelper');
@@ -32,18 +33,38 @@ class DeliveryService {
 
   /**
    * Get all deliveries for a specific date (Admin only)
+   *
+   * Returns BOTH subscription deliveries (DailyDelivery) and one-off extra
+   * tiffin orders for that date, tagged with `kind`, so the admin UI can
+   * distinguish them. Without this, a user who has NO subscription and orders
+   * only an extra tiffin never gets a DailyDelivery row and therefore never
+   * shows up in the admin "Daily Tracking" view, even though the order exists
+   * on their dashboard.
    * @param {string} dateString - Date string
    * @returns {Object} { count, data }
    */
   async getDeliveriesByDate(dateString) {
     const date = new Date(dateString);
+
+    // Subscription-based daily deliveries
     const nextDate = new Date(date);
     nextDate.setDate(nextDate.getDate() + 1);
-
     const deliveries = await deliveryRepository.findByDateRange(date, nextDate);
+
+    // One-off extra tiffin orders placed on the same day
+    const { startOfDay, endOfDay } = getDayRange(date);
+    const extraOrders = await extraTiffinRepository.findAll({
+      date: { $gte: startOfDay, $lte: endOfDay },
+    });
+
+    const data = [
+      ...deliveries.map((d) => ({ ...d.toObject(), kind: 'subscription' })),
+      ...extraOrders.map((o) => ({ ...o.toObject(), kind: 'extra' })),
+    ];
+
     return {
-      count: deliveries.length,
-      data: deliveries,
+      count: data.length,
+      data,
     };
   }
 

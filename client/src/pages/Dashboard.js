@@ -332,7 +332,17 @@ const Dashboard = () => {
               ))
             ) : (
               <div className="no-bills">
-                <p>No bills generated yet. Bills are generated at the end of each month.</p>
+                {/* Improved copy: brand-new users have no subscription yet, so
+                    the old "bills generated at the end of each month" message
+                    was misleading them into thinking something was broken. */}
+                {!subscription ? (
+                  <p>
+                    You don't have any bills yet. Subscribe to a meal plan and your first bill will
+                    appear here once deliveries start.
+                  </p>
+                ) : (
+                  <p>No bills generated yet. Bills are generated at the end of each month.</p>
+                )}
               </div>
             )}
           </div>
