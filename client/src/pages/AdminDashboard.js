@@ -141,6 +141,32 @@ const AdminDashboard = () => {
     }
   };
 
+  const approveBillPayment = async (billId) => {
+    try {
+      await api.put(`/bills/${billId}/approve-payment`);
+      fetchAllBills();
+    } catch (error) {
+      console.error('Error approving payment:', error);
+      alert(error.response?.data?.message || 'Failed to approve payment');
+    }
+  };
+
+  const rejectBillPayment = async (billId) => {
+    try {
+      await api.put(`/bills/${billId}/reject-payment`);
+      fetchAllBills();
+    } catch (error) {
+      console.error('Error rejecting payment:', error);
+      alert(error.response?.data?.message || 'Failed to reject payment');
+    }
+  };
+
+  const getBillStatusBadgeClass = (status) => {
+    if (status === 'paid') return 'badge-success';
+    if (status === 'payment_requested') return 'badge-info';
+    return 'badge-warning';
+  };
+
   const getMonthName = (month) => {
     const months = [
       'January',
@@ -545,6 +571,12 @@ const AdminDashboard = () => {
                             {item.deliveredDays} / {item.totalDays}
                           </span>
                         </div>
+                        {item.extraTiffinsCount > 0 && (
+                          <div className="stat">
+                            <label>Extra Tiffins ({item.extraTiffinsCount})</label>
+                            <span>₹{item.extraTiffinsAmount}</span>
+                          </div>
+                        )}
                         <div className="stat total-amount">
                           <label>Amount Till Date</label>
                           <span className="amount">₹{item.billAmount}</span>
@@ -568,10 +600,8 @@ const AdminDashboard = () => {
                       <div className="billing-user">
                         <strong>{bill.user?.name}</strong>
                         <span>{bill.user?.address?.area}</span>
-                        <span
-                          className={`badge badge-${bill.status === 'paid' ? 'success' : 'warning'}`}
-                        >
-                          {bill.status}
+                        <span className={`badge ${getBillStatusBadgeClass(bill.status)}`}>
+                          {bill.status === 'payment_requested' ? 'awaiting approval' : bill.status}
                         </span>
                       </div>
                       <div className="billing-stats">
@@ -582,8 +612,13 @@ const AdminDashboard = () => {
                           </span>
                         </div>
                         <div className="stat">
-                          <label>Subscription</label>
-                          <span>₹{bill.subscriptionAmount || '-'}</span>
+                          <label>Subscription Fee</label>
+                          <span>
+                            ₹{bill.subscriptionAmount || '-'}
+                            {bill.subscriptionDays > 0 && (
+                              <small> ({bill.subscriptionDays} days)</small>
+                            )}
+                          </span>
                         </div>
                         {bill.extraTiffinsCount > 0 && (
                           <div className="stat">
@@ -597,12 +632,29 @@ const AdminDashboard = () => {
                         </div>
                       </div>
                       <div className="bill-actions">
-                        <button
-                          className={`btn btn-sm ${bill.status === 'paid' ? 'btn-warning' : 'btn-success'}`}
-                          onClick={() => toggleBillStatus(bill._id, bill.status)}
-                        >
-                          {bill.status === 'paid' ? 'Mark as Unpaid' : 'Mark as Paid'}
-                        </button>
+                        {bill.status === 'payment_requested' ? (
+                          <>
+                            <button
+                              className="btn btn-sm btn-success"
+                              onClick={() => approveBillPayment(bill._id)}
+                            >
+                              Approve Payment
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => rejectBillPayment(bill._id)}
+                            >
+                              Reject
+                            </button>
+                          </>
+                        ) : (
+                          <button
+                            className={`btn btn-sm ${bill.status === 'paid' ? 'btn-warning' : 'btn-success'}`}
+                            onClick={() => toggleBillStatus(bill._id, bill.status)}
+                          >
+                            {bill.status === 'paid' ? 'Mark as Unpaid' : 'Mark as Paid'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}

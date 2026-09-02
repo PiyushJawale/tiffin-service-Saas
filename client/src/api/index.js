@@ -59,6 +59,9 @@ export const billApi = {
   generateBill: (data) => api.post('/bills/generate', data),
   generateAllBills: (data) => api.post('/bills/generate-all', data),
   markBillAsPaid: (id) => api.put(`/bills/${id}/pay`),
+  requestBillPayment: (id) => api.put(`/bills/${id}/request-payment`),
+  approveBillPayment: (id) => api.put(`/bills/${id}/approve-payment`),
+  rejectBillPayment: (id) => api.put(`/bills/${id}/reject-payment`),
   toggleBillStatus: (id) => api.put(`/bills/${id}/toggle-status`),
 };
 

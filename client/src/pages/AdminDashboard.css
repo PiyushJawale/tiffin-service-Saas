@@ -456,7 +456,13 @@
 .bill-actions {
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px solid #E0E0E0;
+  display: flex;
+  gap: 8px;
+}
+
+.badge-info {
+  background: #E3F2FD;
+  color: #1976D2;
 }
 
 .btn-sm {

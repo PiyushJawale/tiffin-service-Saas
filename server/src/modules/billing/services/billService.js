@@ -3,6 +3,8 @@ const subscriptionRepository = require('../../subscriptions/repositories/subscri
 const ApiError = require('../../../utils/ApiError');
 const { PRICING } = require('../../../constants');
 const { getMonthName, getMonthDateRange, getDaysInMonth } = require('../../../helpers/dateHelper');
+const deliveryRepository = require('../../deliveries/repositories/deliveryRepository');
+const extraTiffinRepository = require('../../extraTiffins/repositories/extraTiffinRepository');
 
 /**
  * Bill Service
@@ -62,14 +64,21 @@ class BillService {
     // Get user's subscription (active or paused)
     const subscription = await subscriptionRepository.findActiveByUserId(userId);
 
-    // Get extra tiffin orders for current month
+    // Get DELIVERED extra tiffin orders for current month — only delivered
+    // orders add money to the bill
     const { startDate, endDate } = getMonthDateRange(currentMonth, currentYear);
-    const extraOrders = await billRepository.findExtraOrdersByDateRange(userId, startDate, endDate);
+    const extraOrders = await extraTiffinRepository.findByDateRange(
+      userId,
+      startDate,
+      endDate,
+      true,
+      true
+    );
 
     const extraTiffinsCount = extraOrders.length;
     const extraTiffinsAmount = extraOrders.reduce((sum, order) => sum + order.price, 0);
 
-    // Calculate subscription amount (pro-rated if mid-month start)
+    // Calculate subscription amount
     let subscriptionAmount = 0;
     let subscriptionDays = 0;
 
@@ -78,22 +87,39 @@ class BillService {
       const daysInMonth = getDaysInMonth(currentMonth, currentYear);
       const currentDay = now.getDate();
 
-      const subStartDate = new Date(subscription.startDate);
-      if (
-        subStartDate.getMonth() + 1 === currentMonth &&
-        subStartDate.getFullYear() === currentYear
-      ) {
-        const startDay = subStartDate.getDate();
-        subscriptionDays = currentDay - startDay + 1;
-        subscriptionAmount = Math.round((prices.monthlyPrice / daysInMonth) * subscriptionDays);
+      // Prefer actual delivered tiffins when delivery data exists
+      const deliveredCount = await deliveryRepository.countDeliveredByUserAndDateRange(
+        userId,
+        startDate,
+        endDate
+      );
+
+      if (deliveredCount > 0) {
+        subscriptionDays = deliveredCount;
+        subscriptionAmount = deliveredCount * prices.pricePerTiffin;
       } else {
-        subscriptionDays = currentDay;
-        subscriptionAmount = prices.monthlyPrice;
+        // Fallback: pro-rated if mid-month start
+        const subStartDate = new Date(subscription.startDate);
+        if (
+          subStartDate.getMonth() + 1 === currentMonth &&
+          subStartDate.getFullYear() === currentYear
+        ) {
+          const startDay = subStartDate.getDate();
+          subscriptionDays = currentDay - startDay + 1;
+          subscriptionAmount = Math.round((prices.monthlyPrice / daysInMonth) * subscriptionDays);
+        } else {
+          subscriptionDays = currentDay;
+          subscriptionAmount = prices.monthlyPrice;
+        }
       }
     }
 
     const totalAmount = subscriptionAmount + extraTiffinsAmount;
     const subscriptionPrices = subscription ? getSubscriptionPrice(subscription) : null;
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const subscriptionFeePerDay = subscription
+      ? Math.round(subscriptionPrices.monthlyPrice / daysInMonth)
+      : 0;
 
     return {
       month: currentMonth,
@@ -109,6 +135,7 @@ class BillService {
         : null,
       subscriptionAmount,
       subscriptionDays,
+      subscriptionFeePerDay,
       extraTiffinsCount,
       extraTiffinsAmount,
       totalAmount,
@@ -169,15 +196,21 @@ class BillService {
       subscriptionAmount = Math.round((subscription.monthlyPrice / daysInMonth) * subscriptionDays);
     }
 
-    // Get extra tiffin orders for the month
+    // Get DELIVERED extra tiffin orders for the month
     const { startDate, endDate } = getMonthDateRange(month, year);
-    const extraOrders = await billRepository.findExtraOrdersByDateRange(userId, startDate, endDate);
+    const extraOrders = await extraTiffinRepository.findByDateRange(
+      userId,
+      startDate,
+      endDate,
+      true,
+      true
+    );
 
     const extraTiffinsCount = extraOrders.length;
     const extraTiffinsAmount = extraOrders.reduce((sum, order) => sum + order.price, 0);
 
-    // Mark extra orders as added to bill
-    await billRepository.markExtraOrdersAsBilled(userId, startDate, endDate);
+    // Mark only delivered orders as added to bill
+    await extraTiffinRepository.markAsBilled(userId, startDate, endDate, true);
 
     const totalAmount = subscriptionAmount + extraTiffinsAmount;
 
@@ -207,7 +240,13 @@ class BillService {
     const month = data.month || now.getMonth() + 1;
     const year = data.year || now.getFullYear();
 
-    const subscriptions = await subscriptionRepository.findAllActive('user', 'name email');
+    const subscriptions = await subscriptionRepository.findAllActive(
+      {},
+      {
+        path: 'user',
+        select: 'name email',
+      }
+    );
 
     if (subscriptions.length === 0) {
       return {
@@ -234,16 +273,31 @@ class BillService {
           subscriptionAmount = Math.round((sub.monthlyPrice / daysInMonth) * subscriptionDays);
         }
 
-        const extraOrders = await billRepository.findExtraOrdersByDateRange(
+        // Prefer actual delivered tiffins when delivery data exists
+        const prices = getSubscriptionPrice(sub);
+        const deliveredCount = await deliveryRepository.countDeliveredByUserAndDateRange(
           sub.user._id,
           startDate,
           endDate
+        );
+        if (deliveredCount > 0) {
+          subscriptionDays = deliveredCount;
+          subscriptionAmount = deliveredCount * prices.pricePerTiffin;
+        }
+
+        const extraOrders = await extraTiffinRepository.findByDateRange(
+          sub.user._id,
+          startDate,
+          endDate,
+          true,
+          true
         );
 
         const extraTiffinsCount = extraOrders.length;
         const extraTiffinsAmount = extraOrders.reduce((sum, order) => sum + order.price, 0);
 
-        await billRepository.markExtraOrdersAsBilled(sub.user._id, startDate, endDate);
+        // Mark only delivered orders as added to bill
+        await extraTiffinRepository.markAsBilled(sub.user._id, startDate, endDate, true);
 
         const totalAmount = subscriptionAmount + extraTiffinsAmount;
 
@@ -307,12 +361,14 @@ class BillService {
   /**
    * Mark bill as paid (Admin only)
    * @param {string} billId - Bill ID
+   * @param {string} adminId - ID of the admin approving payment
    * @returns {Object} Updated bill
    */
-  async markBillAsPaid(billId) {
+  async markBillAsPaid(billId, adminId) {
     const bill = await billRepository.updateById(billId, {
       status: 'paid',
       paidAt: new Date(),
+      approvedBy: adminId,
     });
 
     if (!bill) {
@@ -320,6 +376,86 @@ class BillService {
     }
 
     return bill;
+  }
+
+  /**
+   * Request payment approval for a bill (Bill owner only)
+   * Sets the bill to 'payment_requested' — an admin must still approve it
+   * before it is considered paid.
+   * @param {string} billId - Bill ID
+   * @param {Object} user - Requesting user
+   * @returns {Object} Updated bill
+   */
+  async requestPayment(billId, user) {
+    const bill = await billRepository.findByIdRaw(billId);
+
+    if (!bill) {
+      throw ApiError.notFound('Bill not found');
+    }
+
+    // Only the bill owner can request payment
+    if (bill.user.toString() !== user._id.toString()) {
+      throw ApiError.forbidden('Not authorized');
+    }
+
+    if (bill.status === 'paid') {
+      throw ApiError.badRequest('Bill is already paid');
+    }
+
+    bill.status = 'payment_requested';
+    bill.requestedPaidAt = new Date();
+    await billRepository.save(bill);
+
+    return billRepository.findById(billId);
+  }
+
+  /**
+   * Approve a user's payment request (Admin only)
+   * @param {string} billId - Bill ID
+   * @param {string} adminId - ID of the approving admin
+   * @returns {Object} Updated bill
+   */
+  async approvePayment(billId, adminId) {
+    const bill = await billRepository.findByIdRaw(billId);
+
+    if (!bill) {
+      throw ApiError.notFound('Bill not found');
+    }
+
+    if (bill.status !== 'payment_requested') {
+      throw ApiError.badRequest('Bill has no pending payment request');
+    }
+
+    bill.status = 'paid';
+    bill.paidAt = new Date();
+    bill.approvedBy = adminId;
+    await billRepository.save(bill);
+
+    return billRepository.findById(billId);
+  }
+
+  /**
+   * Reject a user's payment request (Admin only)
+   * Bill goes back to 'pending' so the user can retry.
+   * @param {string} billId - Bill ID
+   * @returns {Object} Updated bill
+   */
+  async rejectPayment(billId) {
+    const bill = await billRepository.findByIdRaw(billId);
+
+    if (!bill) {
+      throw ApiError.notFound('Bill not found');
+    }
+
+    if (bill.status !== 'payment_requested') {
+      throw ApiError.badRequest('Bill has no pending payment request');
+    }
+
+    bill.status = 'pending';
+    bill.requestedPaidAt = null;
+    await billRepository.save(bill);
+
+    return billRepository.findById(billId);
   }
 
   /**
@@ -337,9 +473,12 @@ class BillService {
     if (bill.status === 'paid') {
       bill.status = 'pending';
       bill.paidAt = null;
+      bill.approvedBy = null;
+      bill.requestedPaidAt = null;
     } else {
       bill.status = 'paid';
       bill.paidAt = new Date();
+      bill.requestedPaidAt = null;
     }
 
     await billRepository.save(bill);

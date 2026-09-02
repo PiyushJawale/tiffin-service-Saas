@@ -74,15 +74,33 @@ const Dashboard = () => {
     }
   };
 
+  const handleRequestPayment = async (billId) => {
+    setActionLoading(true);
+    try {
+      await api.put(`/bills/${billId}/request-payment`);
+      await fetchUserData();
+    } catch (error) {
+      console.error('Error requesting payment approval:', error);
+      alert(error.response?.data?.message || 'Failed to submit payment for approval');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const getStatusBadge = (status) => {
     const statusClasses = {
       active: 'badge-success',
       paused: 'badge-warning',
       cancelled: 'badge-danger',
       pending: 'badge-warning',
+      payment_requested: 'badge-info',
       paid: 'badge-success',
     };
-    return <span className={`badge ${statusClasses[status]}`}>{status}</span>;
+    return (
+      <span className={`badge ${statusClasses[status]}`}>
+        {status === 'payment_requested' ? 'awaiting approval' : status}
+      </span>
+    );
   };
 
   if (loading) {
@@ -328,6 +346,20 @@ const Dashboard = () => {
                       <strong>₹{bill.totalAmount}</strong>
                     </div>
                   </div>
+                  {bill.status !== 'paid' && bill.status !== 'payment_requested' && (
+                    <div className="bill-actions">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        disabled={actionLoading}
+                        onClick={() => handleRequestPayment(bill._id)}
+                      >
+                        Mark as Paid
+                      </button>
+                    </div>
+                  )}
+                  {bill.status === 'payment_requested' && (
+                    <p className="bill-note">Payment submitted — awaiting admin approval.</p>
+                  )}
                 </div>
               ))
             ) : (

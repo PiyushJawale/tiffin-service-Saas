@@ -54,11 +54,20 @@ const billSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['pending', 'paid', 'overdue'],
+      enum: ['pending', 'payment_requested', 'paid', 'overdue'],
       default: 'pending',
     },
     paidAt: {
       type: Date,
+    },
+    // Set when a user (non-admin) requests payment approval
+    requestedPaidAt: {
+      type: Date,
+    },
+    // Admin who approved/reviewed the payment
+    approvedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
     },
     dueDate: {
       type: Date,

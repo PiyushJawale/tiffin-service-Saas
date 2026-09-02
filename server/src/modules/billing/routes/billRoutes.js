@@ -41,6 +41,9 @@ router.post(
   billController.generateAllBills
 );
 router.put('/:id/pay', protect, adminOnly, billController.markBillAsPaid);
+router.put('/:id/request-payment', protect, billController.requestPayment);
+router.put('/:id/approve-payment', protect, adminOnly, billController.approvePayment);
+router.put('/:id/reject-payment', protect, adminOnly, billController.rejectPayment);
 router.put('/:id/toggle-status', protect, adminOnly, billController.toggleBillStatus);
 
 module.exports = router;

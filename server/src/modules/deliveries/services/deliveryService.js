@@ -145,6 +145,13 @@ class DeliveryService {
 
     const deliveries = await deliveryRepository.findByDateRangeForReport(startDate, endDate);
 
+    // Delivered extra tiffin orders for the same month — they add to the
+    // user's bill amount till date
+    const deliveredExtraOrders = await extraTiffinRepository.findAll({
+      date: { $gte: startDate, $lte: endDate },
+      delivered: true,
+    });
+
     // Group by user
     const userReport = {};
     deliveries.forEach((delivery) => {
@@ -155,6 +162,8 @@ class DeliveryService {
           subscription: delivery.subscription,
           totalDays: 0,
           deliveredDays: 0,
+          extraTiffinsCount: 0,
+          extraTiffinsAmount: 0,
         };
       }
       userReport[userId].totalDays++;
@@ -163,9 +172,26 @@ class DeliveryService {
       }
     });
 
+    deliveredExtraOrders.forEach((order) => {
+      const userId = order.user._id ? order.user._id.toString() : order.user.toString();
+      if (!userReport[userId]) {
+        userReport[userId] = {
+          user: order.user,
+          subscription: null,
+          totalDays: 0,
+          deliveredDays: 0,
+          extraTiffinsCount: 0,
+          extraTiffinsAmount: 0,
+        };
+      }
+      userReport[userId].extraTiffinsCount++;
+      userReport[userId].extraTiffinsAmount += order.price;
+    });
+
     const report = Object.values(userReport).map((item) => ({
       ...item,
-      billAmount: item.deliveredDays * (item.subscription?.pricePerTiffin || 0),
+      billAmount:
+        item.deliveredDays * (item.subscription?.pricePerTiffin || 0) + item.extraTiffinsAmount,
     }));
 
     return report;

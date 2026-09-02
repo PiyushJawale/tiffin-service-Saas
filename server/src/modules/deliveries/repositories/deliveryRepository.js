@@ -65,6 +65,21 @@ class DeliveryRepository {
   }
 
   /**
+   * Count delivered tiffins for a user within a date range
+   * @param {string} userId - User ID
+   * @param {Date} startDate - Start date
+   * @param {Date} endDate - End date
+   * @returns {Promise<number>}
+   */
+  async countDeliveredByUserAndDateRange(userId, startDate, endDate) {
+    return DailyDelivery.countDocuments({
+      user: userId,
+      date: { $gte: startDate, $lte: endDate },
+      delivered: true,
+    }).exec();
+  }
+
+  /**
    * Update a delivery by ID
    * @param {string} id - Delivery ID
    * @param {Object} updateData - Data to update

@@ -1,5 +1,4 @@
-const Bill = require('../../../models/Bill');
-const ExtraTiffinOrder = require('../../../models/ExtraTiffinOrder');
+﻿const Bill = require('../../../models/Bill');
 
 /**
  * Bill Repository
@@ -90,39 +89,6 @@ class BillRepository {
    */
   async save(bill) {
     return bill.save();
-  }
-
-  /**
-   * Find extra tiffin orders for a user within a date range
-   * @param {string} userId - User ID
-   * @param {Date} startDate - Start date
-   * @param {Date} endDate - End date
-   * @param {boolean} unbilledOnly - Only unbilled orders
-   * @returns {Promise<Array>}
-   */
-  async findExtraOrdersByDateRange(userId, startDate, endDate, unbilledOnly = true) {
-    const filter = {
-      user: userId,
-      date: { $gte: startDate, $lte: endDate },
-    };
-    if (unbilledOnly) {
-      filter.addedToBill = false;
-    }
-    return ExtraTiffinOrder.find(filter).exec();
-  }
-
-  /**
-   * Mark extra tiffin orders as added to bill
-   * @param {string} userId - User ID
-   * @param {Date} startDate - Start date
-   * @param {Date} endDate - End date
-   * @returns {Promise<Object>}
-   */
-  async markExtraOrdersAsBilled(userId, startDate, endDate) {
-    return ExtraTiffinOrder.updateMany(
-      { user: userId, date: { $gte: startDate, $lte: endDate }, addedToBill: false },
-      { addedToBill: true }
-    ).exec();
   }
 }
 

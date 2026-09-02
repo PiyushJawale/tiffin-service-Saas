@@ -182,6 +182,23 @@
   background: #D32F2F;
 }
 
+.badge-info {
+  background: #E3F2FD;
+  color: #1976D2;
+}
+
+.bill-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.bill-note {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #1976D2;
+}
+
 .btn-warning {
   background: #FF9800;
   color: white;

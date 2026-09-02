@@ -70,8 +70,35 @@ class BillController {
    * Mark bill as paid (Admin only)
    */
   markBillAsPaid = asyncHandler(async (req, res) => {
-    const bill = await billService.markBillAsPaid(req.params.id);
+    const bill = await billService.markBillAsPaid(req.params.id, req.user._id);
     return sendSuccess(res, 200, 'Bill marked as paid', bill);
+  });
+
+  /**
+   * PUT /bills/:id/request-payment
+   * User requests payment approval for their bill (admin must approve)
+   */
+  requestPayment = asyncHandler(async (req, res) => {
+    const bill = await billService.requestPayment(req.params.id, req.user);
+    return sendSuccess(res, 200, 'Payment submitted for admin approval', bill);
+  });
+
+  /**
+   * PUT /bills/:id/approve-payment
+   * Admin approves a user's payment request
+   */
+  approvePayment = asyncHandler(async (req, res) => {
+    const bill = await billService.approvePayment(req.params.id, req.user._id);
+    return sendSuccess(res, 200, 'Payment request approved', bill);
+  });
+
+  /**
+   * PUT /bills/:id/reject-payment
+   * Admin rejects a user's payment request (bill returns to pending)
+   */
+  rejectPayment = asyncHandler(async (req, res) => {
+    const bill = await billService.rejectPayment(req.params.id);
+    return sendSuccess(res, 200, 'Payment request rejected', bill);
   });
 
   /**
