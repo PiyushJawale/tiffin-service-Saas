@@ -61,3 +61,21 @@ IMPLEMENTATION_PLAN.md
 # Local runbook (project-local, not tracked)
 FEATURE_IMPLEMENTATION_RUNBOOK.md
 
+# AI agent files
+.cline/
+.clinerules/
+AGENTS.md
+CLAUDE.md
+.claude/
+.cursor/
+.cursorrules
+.windsurf/
+.aider*
+.codex/
+.gemini/
+.opencode/
+.kiro/
+.codeium/
+.continue/
+.copilot*
+
