@@ -2,6 +2,71 @@ import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import './AdminDashboard.css';
 
+function MenuMessages({ errors, success }) {
+  const msgs = Object.values(errors || {}).filter(Boolean);
+  return (
+    <>
+      {msgs.map((m, i) => (
+        <p key={i} className="field-error">
+          {m}
+        </p>
+      ))}
+      {success && <p className="menu-saved">{success}</p>}
+    </>
+  );
+}
+
+function NewMenuForm({ draft, mealType, onChange, onCreate, saving, success, errors }) {
+  return (
+    <>
+      <p className="no-data">No {mealType} menu for today.</p>
+      <div className="form-group">
+        <label>Dish Name</label>
+        <input
+          type="text"
+          value={draft?.name || ''}
+          onChange={(e) => onChange(mealType, 'name', e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label>Description</label>
+        <textarea
+          rows={2}
+          value={draft?.description || ''}
+          onChange={(e) => onChange(mealType, 'description', e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label>Items (comma-separated)</label>
+        <input
+          type="text"
+          value={draft?.items || ''}
+          onChange={(e) => onChange(mealType, 'items', e.target.value)}
+        />
+      </div>
+      <div className="form-group">
+        <label>Extra Tiffin Price (₹)</label>
+        <input
+          type="number"
+          min="0"
+          value={draft?.price ?? ''}
+          onChange={(e) => onChange(mealType, 'price', e.target.value)}
+        />
+      </div>
+      <div className="bill-actions">
+        <button
+          className="btn btn-sm btn-primary"
+          disabled={saving}
+          onClick={() => onCreate(mealType)}
+        >
+          {saving ? 'Creating…' : 'Create for Today'}
+        </button>
+      </div>
+      <MenuMessages errors={errors} success={success} />
+    </>
+  );
+}
+
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [dashboardStats, setDashboardStats] = useState(null);
@@ -22,6 +87,13 @@ const AdminDashboard = () => {
   });
   const [addUserError, setAddUserError] = useState('');
   const [addUserSuccess, setAddUserSuccess] = useState('');
+  // Menu editor state
+  const [todayMenu, setTodayMenu] = useState(null);
+  const [menuEdits, setMenuEdits] = useState({}); // per mealType: {name, description, items, price, isAvailable}
+  const [newMenus, setNewMenus] = useState({}); // per mealType: draft for missing slots
+  const [menuSaving, setMenuSaving] = useState({}); // per mealType: bool
+  const [menuSuccess, setMenuSuccess] = useState({}); // per mealType: flash message
+  const [menuFieldErrors, setMenuFieldErrors] = useState({}); // per mealType: {field: msg}
 
   useEffect(() => {
     fetchDashboardStats();
@@ -31,6 +103,7 @@ const AdminDashboard = () => {
     if (activeTab === 'users') fetchUsers();
     if (activeTab === 'tracking') fetchDeliveries();
     if (activeTab === 'billing') fetchAllBills();
+    if (activeTab === 'menu') fetchTodayMenuAdmin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, selectedDate]);
 
@@ -135,6 +208,7 @@ const AdminDashboard = () => {
     try {
       await api.put(`/bills/${billId}/toggle-status`);
       fetchAllBills();
+      alert('Bill status updated');
     } catch (error) {
       console.error('Error toggling bill status:', error);
       alert('Failed to update bill status');
@@ -165,6 +239,158 @@ const AdminDashboard = () => {
     if (status === 'paid') return 'badge-success';
     if (status === 'payment_requested') return 'badge-info';
     return 'badge-warning';
+  };
+
+  // ---------- Menu editor ----------
+  const MEAL_TYPES = ['veg', 'non-veg', 'jain'];
+
+  const fetchTodayMenuAdmin = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/menu/today');
+      setTodayMenu(res.data.data);
+      // Prefill edit drafts from the current items
+      const edits = {};
+      MEAL_TYPES.forEach((mealType) => {
+        const item = res.data.data[mealType];
+        if (item) {
+          edits[mealType] = {
+            name: item.name,
+            description: item.description,
+            items: (item.items || []).join(', '),
+            price: item.price,
+            isAvailable: item.isAvailable,
+          };
+        }
+      });
+      setMenuEdits(edits);
+      setNewMenus({});
+    } catch (error) {
+      console.error('Error fetching today menu:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMenuEditChange = (mealType, field, value) => {
+    setMenuEdits((prev) => ({
+      ...prev,
+      [mealType]: { ...prev[mealType], [field]: value },
+    }));
+    setMenuFieldErrors((prev) => ({
+      ...prev,
+      [mealType]: { ...prev[mealType], [field]: undefined },
+    }));
+  };
+
+  const handleNewMenuChange = (mealType, field, value) => {
+    setNewMenus((prev) => ({
+      ...prev,
+      [mealType]: { mealType, ...prev[mealType], [field]: value },
+    }));
+    setMenuFieldErrors((prev) => ({
+      ...prev,
+      [mealType]: { ...prev[mealType], [field]: undefined },
+    }));
+  };
+
+  const validateMenuDraft = (draft, { requireDescription = true } = {}) => {
+    const errors = {};
+    if (!draft?.name || !draft.name.trim()) errors.name = 'Dish name is required';
+    else if (draft.name.trim().length > 200) errors.name = 'Name cannot exceed 200 characters';
+    if (requireDescription) {
+      if (!draft?.description || !draft.description.trim())
+        errors.description = 'Description is required';
+      else if (draft.description.trim().length > 1000)
+        errors.description = 'Description cannot exceed 1000 characters';
+    }
+    const price = Number(draft?.price);
+    if (draft?.price === undefined || draft?.price === '' || Number.isNaN(price) || price < 0)
+      errors.price = 'Price must be a positive number';
+    return errors;
+  };
+
+  const flashMenuSuccess = (mealType, msg) => {
+    setMenuSuccess((prev) => ({ ...prev, [mealType]: msg }));
+    setTimeout(() => setMenuSuccess((prev) => ({ ...prev, [mealType]: '' })), 3000);
+  };
+
+  const saveMenuItem = async (mealType) => {
+    const item = todayMenu[mealType];
+    const edit = menuEdits[mealType];
+    const errors = validateMenuDraft(edit);
+    if (Object.values(errors).some(Boolean)) {
+      setMenuFieldErrors((prev) => ({ ...prev, [mealType]: errors }));
+      return;
+    }
+    setMenuFieldErrors((prev) => ({ ...prev, [mealType]: {} }));
+    setMenuSaving((prev) => ({ ...prev, [mealType]: true }));
+    try {
+      await api.put(`/menu/${item._id}`, {
+        name: edit.name,
+        description: edit.description,
+        price: Number(edit.price),
+        items: edit.items
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        isAvailable: edit.isAvailable,
+      });
+      await fetchTodayMenuAdmin();
+      flashMenuSuccess(mealType, 'Changes saved successfully');
+    } catch (error) {
+      setMenuFieldErrors((prev) => ({
+        ...prev,
+        [mealType]: { api: error.response?.data?.message || 'Failed to update menu item' },
+      }));
+    } finally {
+      setMenuSaving((prev) => ({ ...prev, [mealType]: false }));
+    }
+  };
+
+  const createMenuItem = async (mealType) => {
+    const draft = newMenus[mealType];
+    const errors = validateMenuDraft(draft);
+    if (Object.values(errors).some(Boolean)) {
+      setMenuFieldErrors((prev) => ({ ...prev, [mealType]: errors }));
+      return;
+    }
+    setMenuFieldErrors((prev) => ({ ...prev, [mealType]: {} }));
+    setMenuSaving((prev) => ({ ...prev, [mealType]: true }));
+    try {
+      // dayOfWeek defaults to today so the item shows up in "today's menu" only
+      await api.post('/menu', {
+        mealType,
+        name: draft.name,
+        description: draft.description,
+        price: Number(draft.price),
+        items: (draft.items || '')
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean),
+        dayOfWeek: todayMenu.dayName,
+      });
+      await fetchTodayMenuAdmin();
+      flashMenuSuccess(mealType, 'Menu item created for today');
+    } catch (error) {
+      setMenuFieldErrors((prev) => ({
+        ...prev,
+        [mealType]: { api: error.response?.data?.message || 'Failed to create menu item' },
+      }));
+    } finally {
+      setMenuSaving((prev) => ({ ...prev, [mealType]: false }));
+    }
+  };
+
+  const deleteMenuItem = async (mealType) => {
+    const item = todayMenu[mealType];
+    if (!window.confirm(`Delete "${item.name}" from the menu?`)) return;
+    try {
+      await api.delete(`/menu/${item._id}`);
+      fetchTodayMenuAdmin();
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to delete menu item');
+    }
   };
 
   const getMonthName = (month) => {
@@ -243,6 +469,12 @@ const AdminDashboard = () => {
             onClick={() => setActiveTab('tracking')}
           >
             📦 Daily Tracking
+          </button>
+          <button
+            className={`tab-btn ${activeTab === 'menu' ? 'active' : ''}`}
+            onClick={() => setActiveTab('menu')}
+          >
+            🍽️ Menu
           </button>
           <button
             className={`tab-btn ${activeTab === 'billing' ? 'active' : ''}`}
@@ -528,6 +760,140 @@ const AdminDashboard = () => {
                   </div>
                 ))}
                 {deliveries.length === 0 && <p className="no-data">No deliveries for this date</p>}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Menu Editor Tab */}
+        {activeTab === 'menu' && (
+          <div className="menu-editor-content">
+            <div className="billing-header">
+              <h3>🍽️ Today's Menu &amp; Extra Tiffin Prices</h3>
+              {todayMenu && (
+                <span className="month-label">
+                  {todayMenu.dayName} — {todayMenu.date}
+                </span>
+              )}
+            </div>
+            <p className="no-data">
+              Changes here update what users see on the Menu page. New extra-tiffin orders use the
+              price saved here; orders already placed keep their original price.
+            </p>
+
+            {loading && !todayMenu ? (
+              <div className="loader"></div>
+            ) : (
+              <div className="menu-editor-grid">
+                {MEAL_TYPES.map((mealType) => {
+                  const item = todayMenu?.[mealType];
+                  const edit = menuEdits[mealType];
+                  return (
+                    <div key={mealType} className="menu-editor-card">
+                      <div className="billing-user">
+                        <span className={`tag tag-${mealType}`}>
+                          {mealType === 'non-veg'
+                            ? 'Non-Veg'
+                            : mealType.charAt(0).toUpperCase() + mealType.slice(1)}
+                        </span>
+                        {item && (
+                          <span
+                            className={`badge badge-${item.isAvailable ? 'success' : 'warning'}`}
+                          >
+                            {item.isAvailable ? 'available' : 'hidden'}
+                          </span>
+                        )}
+                      </div>
+
+                      {item && edit ? (
+                        <>
+                          <div className="form-group">
+                            <label>Dish Name</label>
+                            <input
+                              type="text"
+                              value={edit.name}
+                              onChange={(e) =>
+                                handleMenuEditChange(mealType, 'name', e.target.value)
+                              }
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Description</label>
+                            <textarea
+                              rows={2}
+                              value={edit.description}
+                              onChange={(e) =>
+                                handleMenuEditChange(mealType, 'description', e.target.value)
+                              }
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Items (comma-separated)</label>
+                            <input
+                              type="text"
+                              value={edit.items}
+                              onChange={(e) =>
+                                handleMenuEditChange(mealType, 'items', e.target.value)
+                              }
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>Extra Tiffin Price (₹)</label>
+                            <input
+                              type="number"
+                              min="0"
+                              value={edit.price}
+                              onChange={(e) =>
+                                handleMenuEditChange(mealType, 'price', e.target.value)
+                              }
+                            />
+                          </div>
+                          <div className="form-group">
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={edit.isAvailable}
+                                onChange={(e) =>
+                                  handleMenuEditChange(mealType, 'isAvailable', e.target.checked)
+                                }
+                              />{' '}
+                              Available (uncheck to hide from users)
+                            </label>
+                          </div>
+                          <div className="bill-actions">
+                            <button
+                              className="btn btn-sm btn-success"
+                              disabled={menuSaving[mealType]}
+                              onClick={() => saveMenuItem(mealType)}
+                            >
+                              {menuSaving[mealType] ? 'Saving…' : 'Save Changes'}
+                            </button>
+                            <button
+                              className="btn btn-sm btn-danger"
+                              onClick={() => deleteMenuItem(mealType)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                          <MenuMessages
+                            errors={menuFieldErrors[mealType]}
+                            success={menuSuccess[mealType]}
+                          />
+                        </>
+                      ) : (
+                        <NewMenuForm
+                          draft={newMenus[mealType]}
+                          mealType={mealType}
+                          onChange={handleNewMenuChange}
+                          onCreate={createMenuItem}
+                          saving={menuSaving[mealType]}
+                          success={menuSuccess[mealType]}
+                          errors={menuFieldErrors[mealType]}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
