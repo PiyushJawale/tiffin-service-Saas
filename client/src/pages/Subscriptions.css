@@ -193,3 +193,8 @@
     grid-template-columns: 1fr;
   }
 }
+/* ---- design.md refresh ---- */
+.subscription-card {
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--border);
+}

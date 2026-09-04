@@ -524,3 +524,32 @@
     overflow-x: auto;
   }
 }
+/* ---- design.md refresh ---- */
+.stat-card,
+.billing-summary-card,
+.subscription-card {
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--border);
+  transition: box-shadow 0.18s ease;
+}
+
+.stat-card:hover,
+.billing-summary-card:hover {
+  box-shadow: var(--shadow-2);
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .bill-actions .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+}

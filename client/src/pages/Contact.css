@@ -140,3 +140,10 @@
     grid-template-columns: 1fr;
   }
 }
+/* ---- design.md refresh ---- */
+@media (max-width: 480px) {
+  .contact-info,
+  .contact-form {
+    width: 100%;
+  }
+}

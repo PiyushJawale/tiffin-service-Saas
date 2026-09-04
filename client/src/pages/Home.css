@@ -332,3 +332,22 @@
     grid-template-columns: 1fr;
   }
 }
+/* ---- design.md refresh ---- */
+.hero-section {
+  background: linear-gradient(135deg, var(--warm-yellow-soft) 0%, #ffffff 60%);
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    min-height: auto;
+    padding: 40px 16px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-stats {
+    gap: 24px;
+  }
+}

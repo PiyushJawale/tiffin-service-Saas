@@ -23,6 +23,20 @@ body {
   --light-gray: #F5F5F5;
   --white: #FFFFFF;
   --teal: #00796B;
+  --primary-orange-soft: #FFF0E8;
+  --warm-yellow-soft: #FFF8E1;
+  --fresh-green-soft: #E8F5E9;
+  --red-soft: #FDECEA;
+  --info-blue: #1565C0;
+  --info-blue-soft: #E3F2FD;
+  --gray-700: #424242;
+  --border: #E0E0E0;
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.14);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
 /* Utility Classes */
@@ -41,7 +55,13 @@ body {
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.18s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-primary {
@@ -78,14 +98,14 @@ body {
 .card {
   background-color: var(--white);
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-1);
   padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
 }
 
 /* Form Styles */
@@ -112,6 +132,7 @@ body {
 .form-input:focus {
   outline: none;
   border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px var(--primary-orange-soft);
 }
 
 /* Tags */
@@ -187,5 +208,87 @@ body {
   
   .section-subtitle {
     font-size: 16px;
+  }
+}
+/* ---- Design system additions (see design.md) ---- */
+.btn-danger {
+  background-color: var(--red);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background-color: #A91E1E;
+}
+
+.btn-success {
+  background-color: var(--fresh-green);
+  color: var(--white);
+}
+
+.btn-success:hover {
+  background-color: #1F5C24;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(255, 107, 53, 0.4);
+  outline-offset: 2px;
+}
+
+.form-input {
+  border-width: 1px;
+}
+
+/* Status badges — soft tint pills (design.md §6) */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-success {
+  background: var(--fresh-green-soft);
+  color: var(--fresh-green);
+}
+
+.badge-warning {
+  background: var(--warm-yellow-soft);
+  color: #9A6B00;
+}
+
+.badge-info {
+  background: var(--info-blue-soft);
+  color: var(--info-blue);
+}
+
+.badge-danger {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+/* Stat tiles */
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .btn-large {
+    width: 100%;
   }
 }
