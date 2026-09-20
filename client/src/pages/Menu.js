@@ -53,19 +53,17 @@ const Menu = () => {
     }
   };
 
-  const getMealTypeTag = (type) => {
-    const classes = {
-      veg: 'tag-veg',
-      'non-veg': 'tag-nonveg',
-      jain: 'tag-jain',
-    };
-    const labels = {
-      veg: '🥬 Veg',
-      'non-veg': '🍗 Non-Veg',
-      jain: '🧅 Jain',
-    };
-    return <span className={`tag ${classes[type]}`}>{labels[type]}</span>;
+  const mealTypeMeta = {
+    veg: { label: 'Veg', icon: '🥗', banner: 'banner-veg' },
+    'non-veg': { label: 'Non-Veg', icon: '🍗', banner: 'banner-nonveg' },
+    jain: { label: 'Jain', icon: '🧅', banner: 'banner-jain' },
   };
+
+  const getMealTypeTag = (type) => (
+    <span className="veg-indicator" data-type={type} title={mealTypeMeta[type].label}>
+      <span className="veg-dot"></span>
+    </span>
+  );
 
   const mealTypes = ['veg', 'non-veg', 'jain'];
 
@@ -98,6 +96,10 @@ const Menu = () => {
                 const menuItem = todayMenu?.[mealType];
                 return (
                   <div key={mealType} className="today-menu-card">
+                    <div className={`menu-food-banner ${mealTypeMeta[mealType].banner}`}>
+                      <span className="banner-emoji">{mealTypeMeta[mealType].icon}</span>
+                      <span className="banner-label">{mealTypeMeta[mealType].label}</span>
+                    </div>
                     <div className="menu-card-header">{getMealTypeTag(mealType)}</div>
 
                     {menuItem ? (

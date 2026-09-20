@@ -5,14 +5,14 @@
 
 /* Billing Summary Card */
 .billing-summary-card {
-  background: #FF6B35 !important;
-  background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%) !important;
+  background: #E23744 !important;
+  background: linear-gradient(135deg, #E23744 0%, #CB202D 100%) !important;
   padding: 30px;
   border-radius: 20px;
   color: #FFFFFF !important;
   margin-bottom: 40px;
-  box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
-  border: 2px solid #FF6B35;
+  box-shadow: 0 8px 30px #E23744, 0.4);
+  border: 2px solid #E23744;
 }
 
 .billing-summary-card * {
@@ -31,7 +31,7 @@
 /* Tags inside billing card - white background for visibility */
 .billing-summary-card .tag {
   background: rgba(209, 13, 13, 0.789);
-  color: #FF6B35;
+  color: #E23744;
   font-weight: 600;
   padding: 4px 12px;
   border-radius: 20px;
@@ -45,7 +45,7 @@
 
 .billing-summary-card .tag-nonveg {
   background: white;
-  color: #FF6B35;
+  color: #E23744;
 }
 
 .billing-summary-card .tag-jain {
@@ -346,7 +346,7 @@
 
 .tag-nonveg {
   background: #FFEBEE;
-  color: #FF6B35;
+  color: #E23744;
 }
 
 .tag-jain {

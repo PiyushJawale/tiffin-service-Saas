@@ -60,6 +60,22 @@ const Home = () => {
             Experience the taste of home-cooked food, delivered fresh to your doorstep in Mumbai. No
             more worrying about daily cooking!
           </p>
+          <div className="hero-search">
+            <div className="search-location">
+              <span className="search-loc-icon">📍</span>
+              <span className="search-loc-text">Mumbai</span>
+            </div>
+            <div className="search-divider"></div>
+            <div className="search-input-wrap">
+              <span className="search-mag-icon">🔍</span>
+              <input
+                type="text"
+                className="hero-search-input"
+                placeholder="Search for tiffins, thalis, cuisines..."
+                aria-label="Search menu"
+              />
+            </div>
+          </div>
           <div className="hero-buttons">
             <Link to="/menu" className="btn btn-primary btn-large">
               View Menu 🍱
@@ -153,7 +169,11 @@ const Home = () => {
           <div className="testimonials-grid">
             {testimonials.map((testimonial, index) => (
               <div key={index} className="testimonial-card">
-                <div className="testimonial-rating">{'⭐'.repeat(testimonial.rating)}</div>
+                <div className="testimonial-rating">
+                  <span className="rating-badge">
+                    {testimonial.rating}.0 <span className="rating-star">★</span>
+                  </span>
+                </div>
                 <p className="testimonial-text">"{testimonial.text}"</p>
                 <div className="testimonial-author">
                   <strong>{testimonial.name}</strong>

@@ -11,32 +11,32 @@ body {
   line-height: 1.6;
 }
 
-/* Color Variables - NO PURPLE! */
+/* Color Variables — Zomato-style red theme */
 :root {
-  --primary-orange: #FF6B35;
-  --primary-orange-dark: #E55A2B;
-  --warm-yellow: #F7C548;
+  --primary-orange: #E23744; /* Zomato red */
+  --primary-orange-dark: #CB202D;
+  --warm-yellow: #FFB20F;
   --fresh-green: #2E7D32;
   --red: #C62828;
-  --dark-gray: #212121;
-  --medium-gray: #757575;
-  --light-gray: #F5F5F5;
+  --dark-gray: #1C1C1C;
+  --medium-gray: #7E808C;
+  --light-gray: #F8F8F8;
   --white: #FFFFFF;
-  --teal: #00796B;
-  --primary-orange-soft: #FFF0E8;
+  --teal: #E23744;
+  --primary-orange-soft: #FDEDEF;
   --warm-yellow-soft: #FFF8E1;
   --fresh-green-soft: #E8F5E9;
   --red-soft: #FDECEA;
   --info-blue: #1565C0;
   --info-blue-soft: #E3F2FD;
   --gray-700: #424242;
-  --border: #E0E0E0;
-  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.14);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --border: #E8E8E8;
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 /* Utility Classes */
@@ -50,9 +50,9 @@ body {
   display: inline-block;
   padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.18s ease;
@@ -72,15 +72,17 @@ body {
 .btn-primary:hover {
   background-color: var(--primary-orange-dark);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(226, 55, 68, 0.3);
 }
 
 .btn-secondary {
-  background-color: var(--teal);
-  color: var(--white);
+  background-color: var(--white);
+  color: var(--primary-orange);
+  border: 1px solid var(--border);
 }
 
 .btn-secondary:hover {
-  background-color: #006657;
+  background-color: var(--primary-orange-soft);
 }
 
 .btn-outline {
@@ -234,7 +236,7 @@ body {
 }
 
 :focus-visible {
-  outline: 3px solid rgba(255, 107, 53, 0.4);
+  outline: 3px solid rgba(226, 55, 68, 0.4);
   outline-offset: 2px;
 }
 
@@ -291,4 +293,21 @@ body {
   .btn-large {
     width: 100%;
   }
+}
+
+/* Zomato-style rating badge (green pill with white star) */
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #257E3E;
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.rating-badge .rating-star {
+  font-size: 11px;
 }

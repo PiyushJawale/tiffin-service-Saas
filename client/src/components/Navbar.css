@@ -24,14 +24,15 @@
   text-decoration: none;
 }
 
-.logo-icon {
-  font-size: 28px;
+.logo-text {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--primary-orange);
 }
 
-.logo-text {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--primary-orange);
+.logo-icon {
+  font-size: 26px;
 }
 
 .navbar-menu {

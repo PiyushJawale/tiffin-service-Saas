@@ -82,7 +82,7 @@
   background: var(--primary-orange);
   border-radius: 20px;
   padding: 20px;
-  box-shadow: 0 20px 60px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 20px 60px rgba(226, 55, 68, 0.3);
   animation: float 3s ease-in-out infinite;
 }
 
@@ -332,22 +332,173 @@
     grid-template-columns: 1fr;
   }
 }
-/* ---- design.md refresh ---- */
+/* ---- Zomato restyle ---- */
 .hero-section {
-  background: linear-gradient(135deg, var(--warm-yellow-soft) 0%, #ffffff 60%);
+  background: linear-gradient(180deg, #FB1216 0%, #E23744 45%, #E23744 100%);
+  color: var(--white);
+  min-height: 60vh;
+  padding: 60px 20px 80px;
 }
 
-@media (max-width: 480px) {
-  .hero-section {
-    min-height: auto;
-    padding: 40px 16px;
+.hero-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 0;
+  text-align: center;
+  flex: 2;
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.hero-title .highlight {
+  color: var(--white);
+}
+
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.92);
+}
+
+/* Zomato-style location + search bar */
+.hero-search {
+  display: flex;
+  align-items: stretch;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 8px;
+  margin: 0 auto 32px;
+  max-width: 560px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.search-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-weight: 600;
+  color: var(--dark-gray);
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.search-loc-icon {
+  color: var(--primary-orange);
+  font-size: 16px;
+}
+
+.search-loc-text::after {
+  content: '▾';
+  margin-left: 6px;
+  color: var(--primary-orange);
+  font-size: 12px;
+}
+
+.search-divider {
+  width: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.search-mag-icon {
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.hero-search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--dark-gray);
+  background: transparent;
+}
+
+.hero-search-input::placeholder {
+  color: #A0A0A0;
+}
+
+.hero-buttons {
+  justify-content: center;
+}
+
+.hero-buttons .btn-primary {
+  background: var(--white);
+  color: var(--primary-orange);
+}
+
+.hero-buttons .btn-primary:hover {
+  background: var(--primary-orange-soft);
+}
+
+.hero-buttons .btn-outline {
+  border-color: var(--white);
+  color: var(--white);
+}
+
+.hero-buttons .btn-outline:hover {
+  background: var(--white);
+  color: var(--primary-orange);
+}
+
+.hero-stats .stat-number,
+.hero-stats .stat-label {
+  color: var(--white);
+}
+
+/* Tiffin box on red hero — black card with white text */
+.tiffin-box {
+  background: #1C1C1C;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.tiffin-layer {
+  background: #2B2B2B;
+  color: var(--white);
+}
+
+/* Step numbers in Zomato red */
+.step-number {
+  background: var(--white);
+  color: var(--primary-orange);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .hero-search {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-search {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .search-divider {
+    width: 100%;
+    height: 1px;
+    margin: 0;
+  }
+
+  .search-input-wrap {
+    padding: 8px 4px;
   }
 
   .hero-title {
-    font-size: 32px;
-  }
-
-  .hero-stats {
-    gap: 24px;
+    font-size: 30px;
   }
 }
