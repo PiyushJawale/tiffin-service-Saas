@@ -5,8 +5,8 @@
 
 /* Existing Subscription Notice */
 .existing-subscription-notice {
-  background: #FFF8E1;
-  border: 1px solid #FFD54F;
+  background: #fff8e1;
+  border: 1px solid #ffd54f;
   padding: 20px 24px;
   border-radius: 12px;
   margin-bottom: 30px;
@@ -15,7 +15,7 @@
 
 .existing-subscription-notice p {
   margin: 0;
-  color: #F57C00;
+  color: #f57c00;
 }
 
 .existing-subscription-notice a {
@@ -37,7 +37,9 @@
   padding: 30px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   text-align: center;
 }
 
@@ -192,4 +194,9 @@
   .subscription-info {
     grid-template-columns: 1fr;
   }
+}
+/* ---- design.md refresh ---- */
+.subscription-card {
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--border);
 }

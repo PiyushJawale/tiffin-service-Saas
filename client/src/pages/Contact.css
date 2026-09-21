@@ -56,6 +56,16 @@
   gap: 20px;
 }
 
+.contact-field-error {
+  color: var(--red);
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.contact-form [aria-invalid='true'] {
+  border-color: var(--red);
+}
+
 .form-textarea {
   min-height: 120px;
   resize: vertical;
@@ -138,5 +148,12 @@
 
   .faq-grid {
     grid-template-columns: 1fr;
+  }
+}
+/* ---- design.md refresh ---- */
+@media (max-width: 480px) {
+  .contact-info,
+  .contact-form {
+    width: 100%;
   }
 }

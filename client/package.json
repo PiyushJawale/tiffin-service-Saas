@@ -48,6 +48,10 @@
   "jest": {
     "moduleNameMapper": {
       "\\.(css|less|scss|sass)$": "identity-obj-proxy"
-    }
+    },
+    "testMatch": [
+      "**/__tests__/**/*.test.{js,jsx}",
+      "**/?(*.)+(spec|test).{js,jsx}"
+    ]
   }
 }

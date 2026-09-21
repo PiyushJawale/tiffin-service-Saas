@@ -13,7 +13,9 @@ This document details the migration of the Tiffin Service application from a dev
 ## Summary of Changes
 
 ### Files Added: 85+ new files
+
 ### Files Modified: 10 files
+
 ### Files Removed: 0 files (no breaking changes)
 
 ---
@@ -71,30 +73,30 @@ server/src/
 
 Each module (auth, menu, subscriptions, deliveries, billing, admin, extraTiffins) contains:
 
-| File Type | Purpose |
-|-----------|---------|
-| `controllers/*.js` | HTTP request handling, input validation |
-| `services/*.js` | Business logic, data transformation |
-| `repositories/*.js` | Database operations, queries |
-| `validators/*.js` | Input validation schemas |
-| `routes/*.js` | API endpoint definitions |
+| File Type           | Purpose                                 |
+| ------------------- | --------------------------------------- |
+| `controllers/*.js`  | HTTP request handling, input validation |
+| `services/*.js`     | Business logic, data transformation     |
+| `repositories/*.js` | Database operations, queries            |
+| `validators/*.js`   | Input validation schemas                |
+| `routes/*.js`       | API endpoint definitions                |
 
 ### Backend Infrastructure Files
 
-| File | Purpose |
-|------|---------|
-| `config/env.js` | Environment configuration with validation |
-| `database/connection.js` | MongoDB connection with graceful shutdown |
-| `middleware/errorHandler.js` | Centralized error handling |
-| `middleware/security.js` | Helmet, CORS, rate limiting, sanitization |
-| `middleware/validate.js` | Request validation middleware |
-| `utils/logger.js` | Winston-based logging |
-| `utils/responseFormatter.js` | Standardized API responses |
-| `utils/ApiError.js` | Custom error class |
-| `utils/asyncHandler.js` | Async error wrapper |
-| `utils/token.js` | JWT token utilities |
-| `helpers/dateHelper.js` | Date manipulation utilities |
-| `constants/index.js` | App-wide constants |
+| File                         | Purpose                                   |
+| ---------------------------- | ----------------------------------------- |
+| `config/env.js`              | Environment configuration with validation |
+| `database/connection.js`     | MongoDB connection with graceful shutdown |
+| `middleware/errorHandler.js` | Centralized error handling                |
+| `middleware/security.js`     | Helmet, CORS, rate limiting, sanitization |
+| `middleware/validate.js`     | Request validation middleware             |
+| `utils/logger.js`            | Winston-based logging                     |
+| `utils/responseFormatter.js` | Standardized API responses                |
+| `utils/ApiError.js`          | Custom error class                        |
+| `utils/asyncHandler.js`      | Async error wrapper                       |
+| `utils/token.js`             | JWT token utilities                       |
+| `helpers/dateHelper.js`      | Date manipulation utilities               |
+| `constants/index.js`         | App-wide constants                        |
 
 ---
 
@@ -129,15 +131,15 @@ client/src/
 
 ### Frontend Infrastructure Files
 
-| File | Purpose |
-|------|---------|
-| `api/client/index.js` | Axios instance with interceptors |
-| `api/index.js` | Centralized API service modules |
-| `components/common/ErrorBoundary.js` | React error boundaries |
-| `components/common/Loading.js` | Loading state components |
-| `components/common/Toast.js` | Toast notification system |
-| `components/ui/*.js` | Reusable UI primitives |
-| `constants/index.js` | Frontend constants |
+| File                                 | Purpose                          |
+| ------------------------------------ | -------------------------------- |
+| `api/client/index.js`                | Axios instance with interceptors |
+| `api/index.js`                       | Centralized API service modules  |
+| `components/common/ErrorBoundary.js` | React error boundaries           |
+| `components/common/Loading.js`       | Loading state components         |
+| `components/common/Toast.js`         | Toast notification system        |
+| `components/ui/*.js`                 | Reusable UI primitives           |
+| `constants/index.js`                 | Frontend constants               |
 
 ---
 
@@ -145,24 +147,24 @@ client/src/
 
 ### New Files
 
-| File | Purpose |
-|------|---------|
-| `.eslintrc.js` | ESLint configuration for backend |
-| `.prettierrc` | Prettier code formatting config |
-| `.prettierignore` | Prettier ignore patterns |
-| `.lintstagedrc` | Lint-staged configuration |
-| `.husky/pre-commit` | Git pre-commit hooks |
-| `.github/workflows/ci.yml` | GitHub Actions CI/CD pipeline |
-| `server/.env.example` | Environment variables template |
+| File                       | Purpose                          |
+| -------------------------- | -------------------------------- |
+| `.eslintrc.js`             | ESLint configuration for backend |
+| `.prettierrc`              | Prettier code formatting config  |
+| `.prettierignore`          | Prettier ignore patterns         |
+| `.lintstagedrc`            | Lint-staged configuration        |
+| `.husky/pre-commit`        | Git pre-commit hooks             |
+| `.github/workflows/ci.yml` | GitHub Actions CI/CD pipeline    |
+| `server/.env.example`      | Environment variables template   |
 
 ### Modified Files
 
-| File | Changes |
-|------|---------|
-| `Dockerfile` | Updated entry point to use `src/server.js` |
-| `package.json` | Added scripts, dev dependencies, metadata |
-| `.gitignore` | Comprehensive ignore patterns |
-| `README.md` | Complete documentation rewrite |
+| File           | Changes                                    |
+| -------------- | ------------------------------------------ |
+| `Dockerfile`   | Updated entry point to use `src/server.js` |
+| `package.json` | Added scripts, dev dependencies, metadata  |
+| `.gitignore`   | Comprehensive ignore patterns              |
+| `README.md`    | Complete documentation rewrite             |
 
 ---
 
@@ -170,19 +172,19 @@ client/src/
 
 ### Backend Testing
 
-| File | Purpose |
-|------|---------|
-| `server/jest.config.js` | Jest configuration |
-| `server/__tests__/setup.js` | Test environment setup |
+| File                            | Purpose                      |
+| ------------------------------- | ---------------------------- |
+| `server/jest.config.js`         | Jest configuration           |
+| `server/__tests__/setup.js`     | Test environment setup       |
 | `server/__tests__/auth.test.js` | Auth module tests (skeleton) |
 
 ### Frontend Testing
 
-| File | Purpose |
-|------|---------|
-| `client/jest.config.js` | Jest configuration for React |
-| `client/src/__tests__/setup.js` | React Testing Library setup |
-| `client/src/__tests__/__mocks__/fileMock.js` | File mock for tests |
+| File                                         | Purpose                      |
+| -------------------------------------------- | ---------------------------- |
+| `client/jest.config.js`                      | Jest configuration for React |
+| `client/src/__tests__/setup.js`              | React Testing Library setup  |
+| `client/src/__tests__/__mocks__/fileMock.js` | File mock for tests          |
 
 ---
 
@@ -228,23 +230,23 @@ client/src/
 
 ### Scripts Added (Root package.json)
 
-| Script | Command |
-|--------|---------|
-| `start` | Start production server |
-| `dev` | Start development server with nodemon |
-| `dev:client` | Start React development server |
-| `build` | Build React client |
-| `install:all` | Install all dependencies |
-| `lint` | Run ESLint |
-| `lint:fix` | Fix ESLint issues |
-| `format` | Format code with Prettier |
-| `format:check` | Check code formatting |
-| `prepare` | Setup Husky |
-| `test` | Run server tests |
-| `test:client` | Run client tests |
-| `docker:build` | Build Docker image |
-| `docker:run` | Run Docker Compose |
-| `docker:down` | Stop Docker containers |
+| Script         | Command                               |
+| -------------- | ------------------------------------- |
+| `start`        | Start production server               |
+| `dev`          | Start development server with nodemon |
+| `dev:client`   | Start React development server        |
+| `build`        | Build React client                    |
+| `install:all`  | Install all dependencies              |
+| `lint`         | Run ESLint                            |
+| `lint:fix`     | Fix ESLint issues                     |
+| `format`       | Format code with Prettier             |
+| `format:check` | Check code formatting                 |
+| `prepare`      | Setup Husky                           |
+| `test`         | Run server tests                      |
+| `test:client`  | Run client tests                      |
+| `docker:build` | Build Docker image                    |
+| `docker:run`   | Run Docker Compose                    |
+| `docker:down`  | Stop Docker containers                |
 
 ---
 

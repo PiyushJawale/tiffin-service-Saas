@@ -72,6 +72,19 @@ const CONSTANTS = {
     },
   },
 
+  // Supported phone dial codes -> required national (post-dial-code) digits.
+  // Kept small and explicit: only the codes the service actually uses.
+  // ponytail: one fixed length per dial code, no per-carrier/region metadata.
+  // Swap for libphonenumber-js only if real MNP-aware validation is needed.
+  PHONE_COUNTRY_CODES: {
+    '+91': 10, // India
+    '+1': 10, // USA / Canada
+    '+44': 10, // United Kingdom
+    '+971': 9, // UAE
+    '+61': 9, // Australia
+    '+65': 8, // Singapore
+  },
+
   // Pagination defaults
   PAGINATION: {
     DEFAULT_PAGE: 1,
@@ -90,4 +103,5 @@ module.exports.BILL_STATUS = CONSTANTS.BILL_STATUS;
 module.exports.MEAL_TYPES = CONSTANTS.MEAL_TYPES;
 module.exports.DELIVERY_TIMES = CONSTANTS.DELIVERY_TIMES;
 module.exports.PRICING = CONSTANTS.PRICING;
+module.exports.PHONE_COUNTRY_CODES = CONSTANTS.PHONE_COUNTRY_CODES;
 module.exports.PAGINATION = CONSTANTS.PAGINATION;

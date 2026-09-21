@@ -1,4 +1,5 @@
 const { body } = require('express-validator');
+const { emailRule, phoneRule } = require('../../../utils/validationRules');
 
 /**
  * Auth Validation Rules
@@ -13,20 +14,9 @@ const registerValidation = [
     .isLength({ max: 100 })
     .withMessage('Name cannot exceed 100 characters'),
 
-  body('email')
-    .trim()
-    .notEmpty()
-    .withMessage('Email is required')
-    .isEmail()
-    .withMessage('Please provide a valid email')
-    .normalizeEmail(),
+  emailRule('email'),
 
-  body('phone')
-    .trim()
-    .notEmpty()
-    .withMessage('Phone number is required')
-    .matches(/^[0-9+\-\s]+$/)
-    .withMessage('Please provide a valid phone number'),
+  phoneRule('phone'),
 
   body('password')
     .notEmpty()
@@ -42,14 +32,7 @@ const registerValidation = [
 
 // Login validation
 const loginValidation = [
-  body('email')
-    .trim()
-    .notEmpty()
-    .withMessage('Email is required')
-    .isEmail()
-    .withMessage('Please provide a valid email')
-    .normalizeEmail(),
-
+  emailRule('email'),
   body('password').notEmpty().withMessage('Password is required'),
 ];
 
@@ -61,11 +44,7 @@ const updateProfileValidation = [
     .isLength({ max: 100 })
     .withMessage('Name cannot exceed 100 characters'),
 
-  body('phone')
-    .optional()
-    .trim()
-    .matches(/^[0-9+\-\s]+$/)
-    .withMessage('Please provide a valid phone number'),
+  phoneRule('phone', { optional: true }),
 
   body('address.street').optional().trim(),
   body('address.area').optional().trim(),

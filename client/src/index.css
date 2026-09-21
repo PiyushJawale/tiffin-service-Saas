@@ -6,23 +6,37 @@
 
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
   color: #212121;
   line-height: 1.6;
 }
 
-/* Color Variables - NO PURPLE! */
+/* Color Variables — Zomato-style red theme */
 :root {
-  --primary-orange: #FF6B35;
-  --primary-orange-dark: #E55A2B;
-  --warm-yellow: #F7C548;
-  --fresh-green: #2E7D32;
-  --red: #C62828;
-  --dark-gray: #212121;
-  --medium-gray: #757575;
-  --light-gray: #F5F5F5;
-  --white: #FFFFFF;
-  --teal: #00796B;
+  --primary-orange: #e23744; /* Zomato red */
+  --primary-orange-dark: #cb202d;
+  --warm-yellow: #ffb20f;
+  --fresh-green: #2e7d32;
+  --red: #c62828;
+  --dark-gray: #1c1c1c;
+  --medium-gray: #7e808c;
+  --light-gray: #f8f8f8;
+  --white: #ffffff;
+  --teal: #e23744;
+  --primary-orange-soft: #fdedef;
+  --warm-yellow-soft: #fff8e1;
+  --fresh-green-soft: #e8f5e9;
+  --red-soft: #fdecea;
+  --info-blue: #1565c0;
+  --info-blue-soft: #e3f2fd;
+  --gray-700: #424242;
+  --border: #e8e8e8;
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-2: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-3: 0 12px 32px rgba(0, 0, 0, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
 }
 
 /* Utility Classes */
@@ -36,12 +50,18 @@ body {
   display: inline-block;
   padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.18s ease;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-primary {
@@ -52,15 +72,17 @@ body {
 .btn-primary:hover {
   background-color: var(--primary-orange-dark);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(226, 55, 68, 0.3);
 }
 
 .btn-secondary {
-  background-color: var(--teal);
-  color: var(--white);
+  background-color: var(--white);
+  color: var(--primary-orange);
+  border: 1px solid var(--border);
 }
 
 .btn-secondary:hover {
-  background-color: #006657;
+  background-color: var(--primary-orange-soft);
 }
 
 .btn-outline {
@@ -78,14 +100,16 @@ body {
 .card {
   background-color: var(--white);
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-1);
   padding: 20px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
 }
 
 /* Form Styles */
@@ -103,7 +127,7 @@ body {
 .form-input {
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid #E0E0E0;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s ease;
@@ -112,6 +136,7 @@ body {
 .form-input:focus {
   outline: none;
   border-color: var(--primary-orange);
+  box-shadow: 0 0 0 3px var(--primary-orange-soft);
 }
 
 /* Tags */
@@ -124,21 +149,21 @@ body {
 }
 
 .tag-veg {
-  background-color: #E8F5E9;
+  background-color: #e8f5e9;
   color: var(--fresh-green);
   border: 1px solid var(--fresh-green);
 }
 
 .tag-nonveg {
-  background-color: #FFEBEE;
+  background-color: #ffebee;
   color: var(--red);
   border: 1px solid var(--red);
 }
 
 .tag-jain {
-  background-color: #FFF8E1;
-  color: #F9A825;
-  border: 1px solid #F9A825;
+  background-color: #fff8e1;
+  color: #f9a825;
+  border: 1px solid #f9a825;
 }
 
 /* Section Titles */
@@ -184,8 +209,107 @@ body {
   .section-title {
     font-size: 24px;
   }
-  
+
   .section-subtitle {
     font-size: 16px;
   }
+}
+/* ---- Design system additions (see design.md) ---- */
+.btn-danger {
+  background-color: var(--red);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background-color: #a91e1e;
+}
+
+.btn-success {
+  background-color: var(--fresh-green);
+  color: var(--white);
+}
+
+.btn-success:hover {
+  background-color: #1f5c24;
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+:focus-visible {
+  outline: 3px solid rgba(226, 55, 68, 0.4);
+  outline-offset: 2px;
+}
+
+.form-input {
+  border-width: 1px;
+}
+
+/* Status badges — soft tint pills (design.md §6) */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-success {
+  background: var(--fresh-green-soft);
+  color: var(--fresh-green);
+}
+
+.badge-warning {
+  background: var(--warm-yellow-soft);
+  color: #9a6b00;
+}
+
+.badge-info {
+  background: var(--info-blue-soft);
+  color: var(--info-blue);
+}
+
+.badge-danger {
+  background: var(--red-soft);
+  color: var(--red);
+}
+
+/* Stat tiles */
+.stat-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 16px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .btn-large {
+    width: 100%;
+  }
+}
+
+/* Zomato-style rating badge (green pill with white star) */
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #257e3e;
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.rating-badge .rating-star {
+  font-size: 11px;
 }

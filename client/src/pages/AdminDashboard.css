@@ -1,3 +1,21 @@
+.contact-messages-table {
+  overflow-x: auto;
+}
+
+.contact-messages-table table {
+  min-width: 700px;
+  table-layout: fixed;
+}
+
+.contact-messages-table td {
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+
+.contact-messages-table .contact-message-text {
+  white-space: pre-wrap;
+}
+
 .admin-page {
   padding: 40px 20px;
   min-height: 80vh;
@@ -22,7 +40,7 @@
   display: flex;
   gap: 12px;
   margin-bottom: 30px;
-  border-bottom: 2px solid #E0E0E0;
+  border-bottom: 2px solid #e0e0e0;
   padding-bottom: 12px;
 }
 
@@ -117,7 +135,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 24px;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .modal-header h3 {
@@ -160,7 +178,7 @@
 .modal-form .form-group select {
   width: 100%;
   padding: 10px 14px;
-  border: 2px solid #E0E0E0;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
   transition: border-color 0.3s;
@@ -184,12 +202,12 @@
   gap: 12px;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid #E0E0E0;
+  border-top: 1px solid #e0e0e0;
 }
 
 .error-message {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: #fee2e2;
+  color: #dc2626;
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -197,8 +215,8 @@
 }
 
 .success-message {
-  background: #DCFCE7;
-  color: #16A34A;
+  background: #dcfce7;
+  color: #16a34a;
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -222,7 +240,7 @@
 .users-table td {
   padding: 16px 20px;
   text-align: left;
-  border-bottom: 1px solid #E0E0E0;
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .users-table th {
@@ -240,7 +258,7 @@
 
 .date-input {
   padding: 10px 16px;
-  border: 2px solid #E0E0E0;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
 }
@@ -297,14 +315,14 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #E0E0E0;
+  background-color: #e0e0e0;
   transition: 0.4s;
   border-radius: 34px;
 }
 
 .slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 26px;
   width: 26px;
   left: 4px;
@@ -337,7 +355,7 @@
 }
 
 .status.pending {
-  color: #F9A825;
+  color: #f9a825;
 }
 
 /* Billing */
@@ -443,13 +461,13 @@
 }
 
 .badge-success {
-  background: #DCFCE7;
-  color: #16A34A;
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 .badge-warning {
-  background: #FEF3C7;
-  color: #D97706;
+  background: #fef3c7;
+  color: #d97706;
 }
 
 /* Bill Actions */
@@ -461,8 +479,8 @@
 }
 
 .badge-info {
-  background: #E3F2FD;
-  color: #1976D2;
+  background: #e3f2fd;
+  color: #1976d2;
 }
 
 /* Menu Editor */
@@ -474,7 +492,7 @@
 
 .menu-editor-card {
   background: #fff;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 12px;
   padding: 16px;
 }
@@ -486,7 +504,7 @@
 .menu-editor-card textarea {
   width: 100%;
   padding: 8px;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   font-family: inherit;
   resize: vertical;
@@ -498,17 +516,17 @@
 }
 
 .btn-warning {
-  background: #F59E0B;
+  background: #f59e0b;
   color: white;
   border: none;
 }
 
 .btn-warning:hover {
-  background: #D97706;
+  background: #d97706;
 }
 
 .btn-success {
-  background: #10B981;
+  background: #10b981;
   color: white;
   border: none;
 }
@@ -527,25 +545,25 @@
 }
 
 .tag-veg {
-  background: #E8F5E9;
+  background: #e8f5e9;
   color: var(--fresh-green);
 }
 
 .tag-nonveg {
-  background: #FFEBEE;
+  background: #ffebee;
   color: var(--red);
 }
 
 .tag-jain {
-  background: #FFF8E1;
-  color: #F9A825;
+  background: #fff8e1;
+  color: #f9a825;
 }
 
 /* Loader */
 .loader {
   width: 40px;
   height: 40px;
-  border: 4px solid #E0E0E0;
+  border: 4px solid #e0e0e0;
   border-top-color: var(--teal);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -615,4 +633,59 @@
   color: #d32f2f;
   font-size: 12px;
   margin: 4px 0 0;
+}
+/* ---- design.md refresh ---- */
+.tab-btn {
+  border-radius: 8px 8px 0 0;
+  border-bottom: 3px solid transparent;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.tab-btn.active {
+  background: var(--primary-orange-soft);
+  color: var(--primary-orange-dark);
+  border-bottom-color: var(--primary-orange);
+}
+
+.stat-card,
+.billing-item,
+.menu-editor-card,
+.users-table table {
+  box-shadow: var(--shadow-1);
+  border: 1px solid var(--border);
+}
+
+.stat-card:hover,
+.billing-item:hover {
+  box-shadow: var(--shadow-2);
+}
+
+.stat-card {
+  transition: box-shadow 0.18s ease;
+}
+
+@media (max-width: 768px) {
+  .admin-tabs {
+    overflow-x: auto;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-editor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
 }

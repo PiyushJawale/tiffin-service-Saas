@@ -15,13 +15,21 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please provide a valid email'],
+      // Storage guard only - the API validator (utils/validationRules.js) is the
+      // real gate. Kept deliberately free of the old `\w+` limits so valid
+      // addresses such as "user+tag@gmail.com" or ".info" TLDs are storable.
+      match: [
+        /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/,
+        'Please provide a valid email',
+      ],
     },
     phone: {
       type: String,
       required: [true, 'Phone number is required'],
       trim: true,
-      match: [/^[0-9+\-\s]+$/, 'Please provide a valid phone number'],
+      // Shape guard only: must contain a number; "+"/"----"/blank are rejected.
+      // Spaced legacy values stay valid so existing profiles can still be saved.
+      match: [/^\+?\d[\d\s-]{5,19}$/, 'Please provide a valid phone number'],
     },
     password: {
       type: String,
