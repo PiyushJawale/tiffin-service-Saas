@@ -20,6 +20,7 @@ const deliveryRoutes = require('./modules/deliveries/routes/deliveryRoutes');
 const billRoutes = require('./modules/billing/routes/billRoutes');
 const adminRoutes = require('./modules/admin/routes/adminRoutes');
 const extraTiffinRoutes = require('./modules/extraTiffins/routes/extraTiffinRoutes');
+const contactRoutes = require('./modules/contact/routes/contactRoutes');
 
 /**
  * Express Application Setup
@@ -58,6 +59,7 @@ app.use(`${apiBase}/deliveries`, deliveryRoutes);
 app.use(`${apiBase}/bills`, billRoutes);
 app.use(`${apiBase}/admin`, adminRoutes);
 app.use(`${apiBase}/extra-tiffins`, extraTiffinRoutes);
+app.use(`${apiBase}/contact`, contactRoutes);
 
 // Backward compatibility: also mount routes without version prefix
 app.use('/api/auth', authRoutes);
@@ -67,6 +69,7 @@ app.use('/api/deliveries', deliveryRoutes);
 app.use('/api/bills', billRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/extra-tiffins', extraTiffinRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
@@ -90,6 +93,7 @@ app.get('/api/v1', (req, res) => {
       bills: '/api/v1/bills',
       admin: '/api/v1/admin',
       extraTiffins: '/api/v1/extra-tiffins',
+      contact: '/api/v1/contact',
     },
     documentation: '/api/docs',
     health: '/api/health',

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { buildE164Phone, getEmailError, getPhoneError, parsePhoneInput } from '../utils/validation';
 import './AdminDashboard.css';
 
 function MenuMessages({ errors, success }) {
@@ -71,6 +72,9 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [dashboardStats, setDashboardStats] = useState(null);
   const [users, setUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [messagesError, setMessagesError] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [deliveries, setDeliveries] = useState([]);
   const [bills, setBills] = useState([]);
@@ -106,6 +110,27 @@ const AdminDashboard = () => {
     if (activeTab === 'menu') fetchTodayMenuAdmin();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, selectedDate]);
+
+  useEffect(() => {
+    if (activeTab !== 'messages') return;
+    let cancelled = false;
+    setMessagesLoading(true);
+    setMessagesError('');
+    api
+      .get('/contact')
+      .then((res) => {
+        if (!cancelled) setMessages(res.data.data);
+      })
+      .catch((err) => {
+        if (!cancelled) setMessagesError(err.response?.data?.message || 'Unable to load messages.');
+      })
+      .finally(() => {
+        if (!cancelled) setMessagesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab]);
 
   const fetchDashboardStats = async () => {
     try {
@@ -421,8 +446,27 @@ const AdminDashboard = () => {
       return;
     }
 
+    // The API rejects a malformed email or a phone without a country code, so
+    // check here and normalize "9876543210" / "+91 98765 43210" to E.164.
+    const emailError = getEmailError(newUser.email);
+    if (emailError) {
+      setAddUserError(emailError);
+      return;
+    }
+
+    const { countryCode, phone } = parsePhoneInput(newUser.phone);
+    const phoneError = getPhoneError(countryCode, phone);
+    if (phoneError) {
+      setAddUserError(phoneError);
+      return;
+    }
+
     try {
-      const res = await api.post('/admin/users', newUser);
+      const res = await api.post('/admin/users', {
+        ...newUser,
+        email: newUser.email.trim(),
+        phone: buildE164Phone(countryCode, phone),
+      });
       setAddUserSuccess(res.data.message);
       setNewUser({
         name: '',
@@ -482,7 +526,61 @@ const AdminDashboard = () => {
           >
             💰 Billing
           </button>
+          <button
+            className={`tab-btn ${activeTab === 'messages' ? 'active' : ''}`}
+            onClick={() => setActiveTab('messages')}
+          >
+            📨 Messages
+          </button>
         </div>
+
+        {activeTab === 'messages' && (
+          <section className="contact-inbox" aria-labelledby="contact-inbox-heading">
+            <h2 id="contact-inbox-heading">Contact Messages</h2>
+            <p>Latest 200 submissions, newest first. Switch tabs and return to refresh.</p>
+            {messagesLoading ? (
+              <p role="status">Loading messages...</p>
+            ) : messagesError ? (
+              <p className="error-message" role="alert">
+                {messagesError}
+              </p>
+            ) : messages.length === 0 ? (
+              <p className="no-data">No contact messages yet.</p>
+            ) : (
+              <div className="users-table contact-messages-table">
+                <table>
+                  <caption>Contact form submissions</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Phone</th>
+                      <th scope="col">Message</th>
+                      <th scope="col">Received</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {messages.map((item) => (
+                      <tr key={item._id}>
+                        <td>{item.name}</td>
+                        <td>
+                          <a href={`mailto:${item.email}`}>{item.email}</a>
+                        </td>
+                        <td>{item.phone}</td>
+                        <td className="contact-message-text">{item.message}</td>
+                        <td>
+                          <time dateTime={item.createdAt}>
+                            {new Date(item.createdAt).toLocaleString()}
+                          </time>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Dashboard Tab */}
         {activeTab === 'dashboard' && dashboardStats && (

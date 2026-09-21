@@ -56,6 +56,16 @@
   gap: 20px;
 }
 
+.contact-field-error {
+  color: var(--red);
+  margin-top: 6px;
+  font-size: 14px;
+}
+
+.contact-form [aria-invalid='true'] {
+  border-color: var(--red);
+}
+
 .form-textarea {
   min-height: 120px;
   resize: vertical;

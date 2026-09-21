@@ -1,4 +1,13 @@
 import React, { useState } from 'react';
+import api from '../services/api';
+import {
+  buildE164Phone,
+  getEmailError,
+  getMessageError,
+  getPhoneError,
+  parsePhoneInput,
+  parseApiValidationErrors,
+} from '../utils/validation';
 import './Contact.css';
 
 const Contact = () => {
@@ -9,21 +18,54 @@ const Contact = () => {
     message: '',
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
+    setErrors((previous) => ({ ...previous, [e.target.name]: '' }));
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, this would send to backend
-    console.log('Contact form submitted:', formData);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
-    setFormData({ name: '', email: '', phone: '', message: '' });
+    if (loading) return;
+    setError('');
+    const { countryCode, phone } = parsePhoneInput(formData.phone);
+    const fieldErrors = {
+      name: !formData.name.trim()
+        ? 'Name is required'
+        : formData.name.trim().length > 100
+          ? 'Name cannot exceed 100 characters'
+          : '',
+      email: getEmailError(formData.email),
+      phone: !/^[+\d\s().-]*$/.test(formData.phone)
+        ? 'Please provide a valid phone number'
+        : getPhoneError(countryCode, phone),
+      message: getMessageError(formData.message),
+    };
+    setErrors(fieldErrors);
+    if (Object.values(fieldErrors).some(Boolean)) return;
+    setLoading(true);
+    try {
+      await api.post('/contact', {
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: buildE164Phone(countryCode, phone),
+        message: formData.message.trim(),
+      });
+      setSubmitted(true);
+      setFormData({ name: '', email: '', phone: '', message: '' });
+    } catch (err) {
+      const result = parseApiValidationErrors(err.response?.data);
+      setErrors(result.fieldErrors);
+      setError(result.message || 'Unable to send your message. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,16 +111,31 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="contact-form-container">
             {submitted ? (
-              <div className="success-message">
+              <div className="success-message" role="status">
                 <span>✓</span>
                 <h3>Thank you for your message!</h3>
                 <p>We'll get back to you soon.</p>
+                <button className="btn btn-secondary" onClick={() => setSubmitted(false)}>
+                  Send another message
+                </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="contact-form">
+              <form onSubmit={handleSubmit} className="contact-form" noValidate>
+                {error && (
+                  <p className="contact-field-error" role="alert">
+                    {error}
+                  </p>
+                )}
                 <div className="form-group">
-                  <label className="form-label">Your Name</label>
+                  <label className="form-label" htmlFor="contact-name">
+                    Your Name
+                  </label>
                   <input
+                    id="contact-name"
+                    autoComplete="name"
+                    disabled={loading}
+                    aria-invalid={Boolean(errors.name)}
+                    aria-describedby={errors.name ? 'contact-name-error' : undefined}
                     type="text"
                     name="name"
                     value={formData.name}
@@ -87,11 +144,23 @@ const Contact = () => {
                     placeholder="Enter your name"
                     required
                   />
+                  {errors.name && (
+                    <p id="contact-name-error" className="contact-field-error" role="alert">
+                      {errors.name}
+                    </p>
+                  )}
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Email Address</label>
+                  <label className="form-label" htmlFor="contact-email">
+                    Email Address
+                  </label>
                   <input
+                    id="contact-email"
+                    autoComplete="email"
+                    disabled={loading}
+                    aria-invalid={Boolean(errors.email)}
+                    aria-describedby={errors.email ? 'contact-email-error' : undefined}
                     type="email"
                     name="email"
                     value={formData.email}
@@ -100,11 +169,23 @@ const Contact = () => {
                     placeholder="Enter your email"
                     required
                   />
+                  {errors.email && (
+                    <p id="contact-email-error" className="contact-field-error" role="alert">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Phone Number</label>
+                  <label className="form-label" htmlFor="contact-phone">
+                    Phone Number
+                  </label>
                   <input
+                    id="contact-phone"
+                    autoComplete="tel"
+                    disabled={loading}
+                    aria-invalid={Boolean(errors.phone)}
+                    aria-describedby={errors.phone ? 'contact-phone-error' : undefined}
                     type="tel"
                     name="phone"
                     value={formData.phone}
@@ -113,11 +194,22 @@ const Contact = () => {
                     placeholder="+91 XXXXX XXXXX"
                     required
                   />
+                  {errors.phone && (
+                    <p id="contact-phone-error" className="contact-field-error" role="alert">
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Message</label>
+                  <label className="form-label" htmlFor="contact-message">
+                    Message (10–1000 characters)
+                  </label>
                   <textarea
+                    id="contact-message"
+                    disabled={loading}
+                    aria-invalid={Boolean(errors.message)}
+                    aria-describedby={errors.message ? 'contact-message-error' : undefined}
                     name="message"
                     value={formData.message}
                     onChange={handleChange}
@@ -126,10 +218,15 @@ const Contact = () => {
                     rows="5"
                     required
                   ></textarea>
+                  {errors.message && (
+                    <p id="contact-message-error" className="contact-field-error" role="alert">
+                      {errors.message}
+                    </p>
+                  )}
                 </div>
 
-                <button type="submit" className="btn btn-primary submit-btn">
-                  Send Message 📩
+                <button type="submit" className="btn btn-primary submit-btn" disabled={loading}>
+                  {loading ? 'Sending...' : 'Send Message 📩'}
                 </button>
               </form>
             )}
