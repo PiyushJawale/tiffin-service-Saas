@@ -31,6 +31,7 @@ server/
 ```
 
 Each module contains:
+
 - **Controller**: HTTP request handling
 - **Service**: Business logic
 - **Repository**: Database operations
@@ -113,29 +114,29 @@ API_VERSION=v1
 
 ### Backend Structure
 
-| Directory | Purpose |
-|-----------|---------|
-| `config/` | Environment configuration, constants |
-| `database/` | MongoDB connection, graceful shutdown |
-| `modules/` | Feature-based architecture (auth, menu, etc.) |
-| `models/` | Mongoose schemas and models |
-| `middleware/` | Auth, error handling, validation, security |
-| `utils/` | Logger, response formatter, API error classes |
-| `helpers/` | Date utilities, business helpers |
-| `constants/` | App-wide constants (roles, status codes) |
+| Directory     | Purpose                                       |
+| ------------- | --------------------------------------------- |
+| `config/`     | Environment configuration, constants          |
+| `database/`   | MongoDB connection, graceful shutdown         |
+| `modules/`    | Feature-based architecture (auth, menu, etc.) |
+| `models/`     | Mongoose schemas and models                   |
+| `middleware/` | Auth, error handling, validation, security    |
+| `utils/`      | Logger, response formatter, API error classes |
+| `helpers/`    | Date utilities, business helpers              |
+| `constants/`  | App-wide constants (roles, status codes)      |
 
 ### Frontend Structure
 
-| Directory | Purpose |
-|-----------|---------|
-| `api/` | Axios client, API service modules |
-| `components/` | Reusable UI components |
-| `features/` | Feature-based state and components |
-| `hooks/` | Custom React hooks |
-| `context/` | React Context providers |
-| `pages/` | Route-level page components |
-| `utils/` | Frontend utilities |
-| `constants/` | Frontend constants |
+| Directory     | Purpose                            |
+| ------------- | ---------------------------------- |
+| `api/`        | Axios client, API service modules  |
+| `components/` | Reusable UI components             |
+| `features/`   | Feature-based state and components |
+| `hooks/`      | Custom React hooks                 |
+| `context/`    | React Context providers            |
+| `pages/`      | Route-level page components        |
+| `utils/`      | Frontend utilities                 |
+| `constants/`  | Frontend constants                 |
 
 ## 🔐 Security Features
 
@@ -195,6 +196,7 @@ Pre-commit hooks automatically lint and format code via Husky.
 ## 🔄 CI/CD Pipeline
 
 GitHub Actions workflow includes:
+
 - Lint and format checks
 - Server tests
 - Client build
@@ -209,19 +211,20 @@ API documentation is available via Swagger UI at `/api/docs` when running the se
 ### API Versioning
 
 All endpoints are versioned:
+
 - Current version: `/api/v1/*`
 - Backward compatibility: `/api/*` (maps to v1)
 
 ### Key Endpoints
 
-| Module | Endpoint | Description |
-|--------|----------|-------------|
-| Auth | `/api/v1/auth/*` | Registration, login, tokens |
-| Menu | `/api/v1/menu/*` | Menu CRUD operations |
-| Subscriptions | `/api/v1/subscriptions/*` | Subscription management |
-| Deliveries | `/api/v1/deliveries/*` | Delivery tracking |
-| Bills | `/api/v1/bills/*` | Billing operations |
-| Admin | `/api/v1/admin/*` | Admin dashboard |
+| Module        | Endpoint                  | Description                 |
+| ------------- | ------------------------- | --------------------------- |
+| Auth          | `/api/v1/auth/*`          | Registration, login, tokens |
+| Menu          | `/api/v1/menu/*`          | Menu CRUD operations        |
+| Subscriptions | `/api/v1/subscriptions/*` | Subscription management     |
+| Deliveries    | `/api/v1/deliveries/*`    | Delivery tracking           |
+| Bills         | `/api/v1/bills/*`         | Billing operations          |
+| Admin         | `/api/v1/admin/*`         | Admin dashboard             |
 
 ## 🏛️ Design Principles
 
@@ -234,6 +237,7 @@ All endpoints are versioned:
 ## 📈 Scalability
 
 The architecture supports:
+
 - Horizontal scaling via stateless design
 - Database connection pooling
 - Redis caching (ready for integration)

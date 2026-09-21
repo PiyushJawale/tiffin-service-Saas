@@ -52,7 +52,7 @@
 
 .filter-btn {
   padding: 8px 16px;
-  border: 2px solid #E0E0E0;
+  border: 2px solid #e0e0e0;
   background: var(--white);
   border-radius: 8px;
   cursor: pointer;
@@ -72,7 +72,7 @@
 
 .day-select {
   padding: 10px 16px;
-  border: 2px solid #E0E0E0;
+  border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 16px;
   min-width: 150px;
@@ -90,7 +90,9 @@
   border-radius: 16px;
   padding: 24px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .menu-card:hover {
@@ -163,7 +165,7 @@
   align-items: center;
   gap: 16px;
   padding-top: 16px;
-  border-top: 1px solid #E0E0E0;
+  border-top: 1px solid #e0e0e0;
 }
 
 .price-info {
@@ -196,8 +198,8 @@
 }
 
 .success-banner {
-  background: #DCFCE7;
-  color: #16A34A;
+  background: #dcfce7;
+  color: #16a34a;
   padding: 16px 24px;
   border-radius: 12px;
   margin-bottom: 24px;
@@ -257,7 +259,9 @@
   border-radius: 20px;
   padding: 28px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   border: 2px solid transparent;
 }
 
@@ -325,18 +329,18 @@
 }
 
 .tag-veg {
-  background: #E8F5E9;
+  background: #e8f5e9;
   color: var(--fresh-green);
 }
 
 .tag-nonveg {
-  background: #FFEBEE;
+  background: #ffebee;
   color: var(--red);
 }
 
 .tag-jain {
-  background: #FFF8E1;
-  color: #F9A825;
+  background: #fff8e1;
+  color: #f9a825;
 }
 
 /* Responsive for Today's Menu */
@@ -402,7 +406,10 @@
 }
 
 .filter-btn {
-  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
 }
 
 @media (max-width: 480px) {
@@ -430,15 +437,15 @@
 }
 
 .banner-veg {
-  background: linear-gradient(135deg, #1E9E4B 0%, #257E3E 100%);
+  background: linear-gradient(135deg, #1e9e4b 0%, #257e3e 100%);
 }
 
 .banner-nonveg {
-  background: linear-gradient(135deg, #D9432F 0%, #B71C1C 100%);
+  background: linear-gradient(135deg, #d9432f 0%, #b71c1c 100%);
 }
 
 .banner-jain {
-  background: linear-gradient(135deg, #F9A825 0%, #E65100 100%);
+  background: linear-gradient(135deg, #f9a825 0%, #e65100 100%);
 }
 
 .banner-emoji {
@@ -461,31 +468,31 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  border: 2px solid #2E7D32;
+  border: 2px solid #2e7d32;
   border-radius: 3px;
 }
 
 .veg-indicator[data-type='non-veg'] {
-  border-color: #C62828;
+  border-color: #c62828;
 }
 
 .veg-indicator[data-type='jain'] {
-  border-color: #F9A825;
+  border-color: #f9a825;
 }
 
 .veg-dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #2E7D32;
+  background: #2e7d32;
 }
 
 .veg-indicator[data-type='non-veg'] .veg-dot {
-  background: #C62828;
+  background: #c62828;
 }
 
 .veg-indicator[data-type='jain'] .veg-dot {
-  background: #F9A825;
+  background: #f9a825;
 }
 
 /* Card: flat with subtle border, Zomato style */

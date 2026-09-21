@@ -9,7 +9,7 @@
   justify-content: space-between;
   min-height: 80vh;
   padding: 40px 20px;
-  background: linear-gradient(135deg, #FFF8E1 0%, #FFFFFF 100%);
+  background: linear-gradient(135deg, #fff8e1 0%, #ffffff 100%);
 }
 
 .hero-content {
@@ -102,8 +102,13 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 /* Features Section */
@@ -334,7 +339,7 @@
 }
 /* ---- Zomato restyle ---- */
 .hero-section {
-  background: linear-gradient(180deg, #FB1216 0%, #E23744 45%, #E23744 100%);
+  background: linear-gradient(180deg, #fb1216 0%, #e23744 45%, #e23744 100%);
   color: var(--white);
   min-height: 60vh;
   padding: 60px 20px 80px;
@@ -426,7 +431,7 @@
 }
 
 .hero-search-input::placeholder {
-  color: #A0A0A0;
+  color: #a0a0a0;
 }
 
 .hero-buttons {
@@ -459,12 +464,12 @@
 
 /* Tiffin box on red hero — black card with white text */
 .tiffin-box {
-  background: #1C1C1C;
+  background: #1c1c1c;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 }
 
 .tiffin-layer {
-  background: #2B2B2B;
+  background: #2b2b2b;
   color: var(--white);
 }
 
